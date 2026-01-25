@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <title>fawakihAI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
+/* الستايل الأصلي */
 body{
  font-family:Tahoma;
  background:#0f172a;
@@ -22,6 +26,7 @@ body{
  text-align:center;
  width:90%;
  max-width:400px;
+ position: relative; /* لضمان تنسيق العناصر المضافة */
 }
 button{
  background:#22c55e;
@@ -33,22 +38,126 @@ button{
  margin-top:20px;
 }
 button:hover{opacity:.9}
+
+/* --- ستايل الإضافات الجديدة (حقوق المطور + التوثيق + السوشيال ميديا) --- */
+
+/* تنسيق اسم المطور وعلامة التوثيق */
+.developer-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px; /* مسافة قبل العنوان الأصلي */
+}
+
+.developer-name {
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Cairo', sans-serif; 
+    background: linear-gradient(270deg, #0000FF, #8B0000, #00008B, #0000FF);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientAnim 4s ease infinite;
+}
+
+.verified-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 0 8px rgba(29, 161, 242, 0.6));
+    animation: pulse-badge 2s infinite;
+}
+
+.verified-badge svg {
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes gradientAnim {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-badge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* تنسيق أزرار التواصل */
+.social-area {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+
+.whatsapp { background: #25D366; box-shadow: 0 0 10px rgba(37,211,102,0.2); }
+.instagram { background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); box-shadow: 0 0 10px rgba(253,29,29,0.2); }
+
+.social-btn:hover { transform: translateY(-5px); }
+
 </style>
 </head>
 <body>
 
 <div class="box">
+ 
+ <div class="developer-header">
+    <div class="verified-badge">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 12.5C22.5 10.92 21.7 9.55 20.47 8.74C20.73 7.64 20.67 6.48 20.29 5.46C19.19 5.26 18.04 5.33 17.02 5.63C16.22 4.37 14.84 3.57 13.3 3.57C11.76 3.57 10.38 4.37 9.58 5.63C8.56 5.33 7.41 5.26 6.31 5.46C5.93 6.48 5.87 7.64 6.13 8.74C4.9 9.55 4.1 10.92 4.1 12.5C4.1 14.08 4.9 15.45 6.13 16.26C5.87 17.36 5.93 18.52 6.31 19.54C7.41 19.74 8.56 19.67 9.58 19.37C10.38 20.63 11.76 21.43 13.3 21.43C14.84 21.43 16.22 20.63 17.02 19.37C18.04 19.67 19.19 19.74 20.29 19.54C20.67 18.52 20.73 17.36 20.47 16.26C21.7 15.45 22.5 14.08 22.5 12.5ZM11.27 16.6L7.14 12.47L8.55 11.06L11.27 13.78L16.68 8.37L18.09 9.78L11.27 16.6Z" fill="#1DA1F2"/>
+        </svg>
+    </div>
+    <span class="developer-name">Hamza Elhumada</span>
+ </div>
  <h1>🍓 fawakihAI</h1>
  <p>تطبيق ذكاء اصطناعي لتوقع وتحليل الفواكه</p>
 
- <a href="app/fawakihAI_3.1.2.apk" download>
+ <a href="app/fawakihAI.apk" download>
   <button>⬇️ تحميل التطبيق</button>
  </a>
 
  <p style="font-size:12px;margin-top:15px">
  يدعم أندرويد فقط
  </p>
-</div>
+
+ <div class="social-area">
+    <div class="social-links">
+        <a href="https://wsend.co/905424678123" target="_blank" class="social-btn whatsapp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://www.instagram.com/000n._?igsh=aHZuY3N5bzFzdmdi" target="_blank" class="social-btn instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </div>
+ </div>
+ </div>
 
 </body>
 </html>
