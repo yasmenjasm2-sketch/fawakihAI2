@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+هنا مشكل نزلت نسخه جديده من تطبيق وماعم تتحمل مم لموقع حللي لمشكل<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- التصميم الكامل (CSS) --- */
+        /* --- نقل التصميم الكامل (CSS) --- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,8 +16,8 @@
         }
 
         body {
-            font-family: 'Cairo', sans-serif;
-            background: radial-gradient(circle at top, #1a1a1a, #000000);
+            font-family: 'Cairo', sans-serif; /* تغيير الخط لنفس خط التصميم الثاني */
+            background: radial-gradient(circle at top, #1a1a1a, #000000); /* نفس الخلفية */
             color: #e0e0e0;
             text-align: center;
             min-height: 100vh;
@@ -27,9 +27,10 @@
             line-height: 1.7;
             padding-bottom: 20px;
             overflow-x: hidden;
-            justify-content: center;
+            justify-content: center; /* توسيط عمودي */
         }
 
+        /* تنسيق اسم المطور وعلامة التوثيق */
         .developer-header {
             display: flex;
             align-items: center;
@@ -52,6 +53,7 @@
             animation: gradientAnim 4s ease infinite;
         }
 
+        /* تصميم علامة التوثيق الزرقاء */
         .verified-badge {
             display: flex;
             align-items: center;
@@ -79,9 +81,10 @@
             100% { transform: scale(1); }
         }
 
+        /* الحاوية الرئيسية (بديل box القديم بنفس تصميم الجديد) */
         .container {
             width: 90%;
-            max-width: 450px;
+            max-width: 450px; /* تعديل بسيط ليناسب المحتوى القليل */
             margin: 0 auto;
             background: rgba(20, 20, 20, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -103,6 +106,7 @@
             margin-bottom: 20px;
         }
 
+        /* زر التحميل (نفس تصميم الكود الثاني تماماً) */
         .download-btn {
             display: block;
             width: 100%;
@@ -140,6 +144,7 @@
             left: 100%;
         }
 
+        /* روابط التواصل */
         .social-area {
             margin-top: 30px;
             padding-top: 20px;
@@ -171,6 +176,7 @@
 
         .social-btn:hover { transform: translateY(-5px); }
 
+        /* التذييل */
         footer {
             margin-top: 30px;
             font-size: 0.8rem;
@@ -193,7 +199,7 @@
         <h1>🍓 fawakihAI</h1>
         <p>تطبيق ذكاء اصطناعي لتوقع وتحليل الفواكه</p>
 
-        <a href="https://github.com/yasmenjasm2-sketch/fawakihAI2/raw/main/app/fawakihAI.apk" download="fawakihAI.apk" class="download-btn">
+        <a href="app/fawakihAIg.apk" download class="download-btn">
             <i class="fas fa-download" style="margin-left:8px;"></i>3.1.2 تحميل التطبيق
         </a>
 
