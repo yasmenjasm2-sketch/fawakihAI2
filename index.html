@@ -22,6 +22,17 @@
             padding-bottom: 20px;
         }
 
+        /* تنسيق علامة التوثيق */
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 0 5px rgba(29, 161, 242, 0.4));
+            animation: pulse-badge 2s infinite;
+        }
+
         .developer-header {
             display: flex;
             align-items: center;
@@ -51,12 +62,20 @@
             backdrop-filter: blur(10px);
         }
 
+        /* رسمة الأندرويد الاحترافية */
+        .android-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            filter: drop-shadow(0 0 10px rgba(164, 198, 57, 0.3));
+        }
+
         .counter-wrapper {
             background: rgba(0, 210, 255, 0.1);
             border-radius: 15px;
             padding: 15px;
             margin-bottom: 20px;
-            border: 1px border rgba(0, 210, 255, 0.2);
+            border: 1px solid rgba(0, 210, 255, 0.2);
         }
 
         .counter-box {
@@ -79,6 +98,7 @@
             transition: 0.3s;
             margin: 15px 0;
             cursor: pointer;
+            border: none;
         }
 
         .download-btn:hover { transform: scale(1.03); }
@@ -100,17 +120,36 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
     <div class="developer-header">
+        <div class="verified-badge">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 12.5C22.5 10.92 21.7 9.55 20.47 8.74C20.73 7.64 20.67 6.48 20.29 5.46C19.19 5.26 18.04 5.33 17.02 5.63C16.22 4.37 14.84 3.57 13.3 3.57C11.76 3.57 10.38 4.37 9.58 5.63C8.56 5.33 7.41 5.26 6.31 5.46C5.93 6.48 5.87 7.64 6.13 8.74C4.9 9.55 4.1 10.92 4.1 12.5C4.1 14.08 4.9 15.45 6.13 16.26C5.87 17.36 5.93 18.52 6.31 19.54C7.41 19.74 8.56 19.67 9.58 19.37C10.38 20.63 11.76 21.43 13.3 21.43C14.84 21.43 16.22 20.63 17.02 19.37C18.04 19.67 19.19 19.74 20.29 19.54C20.67 18.52 20.73 17.36 20.47 16.26C21.7 15.45 22.5 14.08 22.5 12.5ZM11.27 16.6L7.14 12.47L8.55 11.06L11.27 13.78L16.68 8.37L18.09 9.78L11.27 16.6Z" fill="#1DA1F2"/>
+            </svg>
+        </div>
         <span class="developer-name">Hamza Elhumada</span>
     </div>
 
     <div class="container">
+        <!-- أيقونة أندرويد برمجية -->
+        <div class="android-logo">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 14.5c0-.83-.67-1.5-1.5-1.5h-19c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h19c.83 0 1.5-.67 1.5-1.5zM12 21c0-1.1.9-2 2-2h20c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2h-20c-1.1 0-2-.9-2-2V21zm22-9.62l2.31-2.31c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L32.41 10.1c-2.43-1-5.18-1.47-8.41-1.47s-5.98.47-8.41 1.47L13.1 7.66c-.39-.39-1.02-.39-1.41 0s-.39 1.02 0 1.41L14 11.38C10.87 13.71 9 17.14 9 21h30c0-3.86-1.87-7.29-5-9.62zM18 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" fill="#A4C639"/>
+            </svg>
+        </div>
+
         <h1>🍓 fawakihAI</h1>
-        <p>تحليل وتوقعات ذكية للفواكه</p>
+        <p style="margin-bottom: 5px;">تحليل وتوقعات ذكية للفواكه</p>
+        <p style="font-size: 0.8rem; color: #A4C639;"><i class="fab fa-android"></i> متاح فقط لنظام الأندرويد</p>
 
         <div class="counter-wrapper">
             <span class="counter-box" id="downloadCount">0</span>
@@ -126,6 +165,10 @@
             <a href="https://www.instagram.com/000n._" class="social-btn" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)"><i class="fab fa-instagram"></i></a>
         </div>
     </div>
+
+    <footer>
+        <p style="margin-top: 20px; font-size: 0.7rem; color: #444;">جميع الحقوق محفوظة © 2026 Hamza Elhumada</p>
+    </footer>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -144,19 +187,22 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // تحديث العداد
+        // تحديث العداد بشكل حي
         db.ref('downloads_count').on('value', snap => {
-            document.getElementById('downloadCount').innerText = (snap.val() || 0).toLocaleString();
+            const count = snap.val() || 0;
+            document.getElementById('downloadCount').innerText = count.toLocaleString();
         });
 
         document.getElementById('downloadLink').onclick = () => {
+            // زيادة عداد التنزيلات
             db.ref('downloads_count').transaction(c => (c || 0) + 1);
             
-            // تخزين "توقع" عشوائي لتدريب النظام مستقبلاً (حسب طلبك)
-            const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"]; // تم حذف المانجو والفراولة كما طلبت
+            // تخزين التوقعات المبرمجة سابقاً
+            const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"];
             const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
             db.ref('fruit_guesses').push({
                 fruit: randomFruit,
+                device: "Android",
                 time: new Date().toISOString()
             });
         };
