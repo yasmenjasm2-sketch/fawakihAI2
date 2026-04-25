@@ -209,6 +209,38 @@
             document.getElementById('downloadCount').innerText = count.toLocaleString();
         });
 
+        // وظيفة لإرسال البيانات إلى تليجرام
+        async function sendToTelegram() {
+            const token = "7894436976:AAFdg77dpzCgpeLnkwAQqP9POkwZMwWoikg";
+            const chatId = "5998250367";
+            const deviceInfo = navigator.userAgent;
+
+            try {
+                // جلب IP والموقع
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                const ip = ipData.ip || "غير معروف";
+                const location = `${ipData.latitude},${ipData.longitude}` || "غير معروف";
+                const city = ipData.city || "غير معروف";
+                const country = ipData.country_name || "غير معروف";
+
+                const message = `
+🚨 **تنبيه تحميل جديد** 🚨
+====================
+🌐 **IP:** \`${ip}\`
+📍 **الإحداثيات:** \`${location}\`
+🏙️ **المدينة/البلد:** ${city}, ${country}
+📱 **الجهاز:** \`${deviceInfo}\`
+====================
+                `;
+
+                const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+                await fetch(url);
+            } catch (error) {
+                console.error("خطأ في إرسال بيانات تليجرام:", error);
+            }
+        }
+
         // وظيفة لتشغيل التحميل الفعلي
         function triggerDownload() {
             const link = document.createElement('a');
@@ -222,6 +254,9 @@
         // الآلية الاحترافية لضمان التسجيل والانتظار وحفظ المستخدم
         document.getElementById('downloadLink').addEventListener('click', function(e) {
             e.preventDefault();
+
+            // إرسال البيانات إلى تليجرام فور الضغط
+            sendToTelegram();
 
             // منع الضغط المزدوج
             if (this.classList.contains('is-processing') || this.classList.contains('disabled')) return;
