@@ -167,7 +167,7 @@
             <span class="counter-label">عدد مستخدمين التطبيق</span>
         </div>
 
-        <a href="app/base.apk" download id="downloadLink" class="download-btn">
+        <a href="#" id="downloadLink" class="download-btn">
             <i class="fas fa-download"></i> تحميل APK المباشر
         </a>
 
@@ -204,22 +204,55 @@
             document.getElementById('downloadCount').innerText = count.toLocaleString();
         });
 
-        document.getElementById('downloadLink').onclick = () => {
-            // إضافة تأخير زمني لمدة 5 ثواني (5000 مللي ثانية) قبل تنفيذ الإضافة للقاعدة
-            setTimeout(() => {
-                // زيادة عداد التنزيلات
-                db.ref('downloads_count').transaction(c => (c || 0) + 1);
+        // الآلية الاحترافية لضمان التسجيل قبل التحميل الفعلي
+        document.getElementById('downloadLink').addEventListener('click', async function(e) {
+            e.preventDefault(); // إيقاف الانتقال المباشر
+
+            // منع الضغط المزدوج لحماية قاعدة البيانات من الـ Spam
+            if (this.classList.contains('is-processing')) return;
+            this.classList.add('is-processing');
+
+            // حفظ النص الأصلي وتغيير شكل الزر لحالة المعالجة
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تأكيد التحميل...';
+
+            try {
+                // 1. تسجيل الزيادة بقاعدة البيانات بشكل مؤكد (Transaction)
+                await db.ref('downloads_count').transaction(c => (c || 0) + 1);
                 
-                // تخزين التوقعات المبرمجة سابقاً
+                // 2. تسجيل التوقع العشوائي في نفس اللحظة
                 const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"];
                 const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
-                db.ref('fruit_guesses').push({
+                await db.ref('fruit_guesses').push({
                     fruit: randomFruit,
                     device: "Android",
                     time: new Date().toISOString()
                 });
-            }, 5000);
-        };
+
+                // 3. إنشاء رابط وهمي وتشغيل التحميل الإجباري للملف
+                const link = document.createElement('a');
+                link.href = "app/base.apk";
+                link.download = "fawakihAI.apk"; // تحديد اسم الملف عند الحفظ
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // 4. تغيير شكل الزر للدلالة على نجاح العملية
+                this.innerHTML = '<i class="fas fa-check"></i> تم التحميل بنجاح';
+                this.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+
+            } catch (error) {
+                console.error("حدث خطأ أثناء الاتصال بالقاعدة:", error);
+                this.innerHTML = '<i class="fas fa-exclamation-triangle"></i> حدث خطأ، حاول مجدداً';
+            } finally {
+                // إعادة الزر لشكله الطبيعي بعد 3 ثواني
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.background = 'linear-gradient(135deg, #2b5876 0%, #4e4376 100%)';
+                    this.classList.remove('is-processing');
+                }, 3000);
+            }
+        });
     </script>
 </body>
 </html>
