@@ -219,87 +219,82 @@
             document.body.removeChild(link);
         }
 
-        // الآلية الاحترافية لضمان التسجيل والانتظار وحفظ المستخدم
+        // الآلية الجديدة: التحميل أولاً، ثم التوثيق الوهمي للتأكد من نجاح أمر التحميل
         document.getElementById('downloadLink').addEventListener('click', function(e) {
             e.preventDefault();
 
-            // منع الضغط المزدوج
-            if (this.classList.contains('is-processing') || this.classList.contains('disabled')) return;
+            // منع الضغط المتكرر
+            if (this.classList.contains('disabled')) return;
 
             const btn = this;
             const originalText = btn.innerHTML;
 
-            // التحقق مما إذا كان المستخدم قد قام بالتحميل مسبقاً
+            // التحقق مما إذا كان المستخدم قد قام بالتحميل مسبقاً من هذا المتصفح
             const hasDownloaded = localStorage.getItem('user_downloaded_fawakihAI');
 
             if (hasDownloaded) {
-                // إذا حمل التطبيق سابقاً: لا يتم إضافة رقم جديد ولا ينتظر 40 ثانية
-                btn.innerHTML = '<i class="fas fa-check"></i> جاري التحميل فوراً...';
-                btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-                
+                // إذا كان قد حمله مسبقاً، يبدأ التحميل فوراً بدون زيادة في قاعدة البيانات
+                btn.classList.add('disabled');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري بدء التحميل...';
                 triggerDownload();
                 
                 setTimeout(() => {
                     btn.innerHTML = originalText;
-                    btn.style.background = '';
-                }, 3000);
+                    btn.classList.remove('disabled');
+                }, 2000);
                 return;
             }
 
-            // إذا كانت هذه أول مرة: يبدأ عداد الـ 40 ثانية
-            btn.classList.add('is-processing', 'disabled');
-            let timeLeft = 40;
-            
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> يرجى الانتظار ${timeLeft} ثانية...`;
-            btn.style.background = 'linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)';
+            // إذا كانت هذه المرة الأولى: نقوم بتعطيل الزر مؤقتاً لتجهيز التحميل
+            btn.classList.add('disabled');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تجهيز الملف...';
 
-            const countdownInterval = setInterval(async () => {
-                timeLeft--;
+            try {
+                // 1. تشغيل التحميل الفعلي للملف أولاً
+                triggerDownload();
+
+                // 2. الانتظار لثانية ونصف (حيلة للتأكد من أن نافذة التحميل ظهرت للمستخدم) 
+                // ثم تسجيلها في قاعدة البيانات لضمان أنها ليست مجرد نقرة عابرة
+                setTimeout(async () => {
+                    // زيادة العداد
+                    await db.ref('downloads_count').transaction(c => (c || 0) + 1);
+                    
+                    // إرسال التوقع العشوائي
+                    const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"];
+                    const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+                    await db.ref('fruit_guesses').push({
+                        fruit: randomFruit,
+                        device: "Android",
+                        time: new Date().toISOString()
+                    });
+
+                    // حفظ في المتصفح لمنع الزيادة الوهمية لاحقاً
+                    localStorage.setItem('user_downloaded_fawakihAI', 'true');
+
+                    // تغيير شكل الزر بنجاح
+                    btn.innerHTML = '<i class="fas fa-check"></i> بدأ التحميل بنجاح';
+                    btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+
+                    // إعادة الزر لشكله الطبيعي بعد 3 ثوانٍ
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = '';
+                        btn.classList.remove('disabled');
+                    }, 3000);
+
+                }, 1500); // تأخير 1.5 ثانية فقط
+
+            } catch (error) {
+                console.error("حدث خطأ:", error);
+                btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> حدث خطأ، حاول مجدداً';
+                btn.style.background = 'linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%)';
                 
-                if (timeLeft > 0) {
-                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> يرجى الانتظار ${timeLeft} ثانية...`;
-                } else {
-                    // انتهاء العداد وتفعيل الإضافة للقاعدة
-                    clearInterval(countdownInterval);
-                    btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> جاري توثيق التحميل...';
-
-                    try {
-                        // 1. تسجيل الزيادة بقاعدة البيانات بشكل مؤكد
-                        await db.ref('downloads_count').transaction(c => (c || 0) + 1);
-                        
-                        // 2. تسجيل التوقع العشوائي في نفس اللحظة 
-                        const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"];
-                        const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
-                        await db.ref('fruit_guesses').push({
-                            fruit: randomFruit,
-                            device: "Android",
-                            time: new Date().toISOString()
-                        });
-
-                        // 3. حفظ المستخدم لعدم تكرار الإضافة مستقبلاً
-                        localStorage.setItem('user_downloaded_fawakihAI', 'true');
-
-                        // 4. تشغيل التحميل
-                        triggerDownload();
-
-                        // 5. تغيير شكل الزر لنجاح العملية
-                        btn.innerHTML = '<i class="fas fa-check"></i> تم التحميل بنجاح';
-                        btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-
-                    } catch (error) {
-                        console.error("حدث خطأ أثناء الاتصال بالقاعدة:", error);
-                        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> حدث خطأ، حاول مجدداً';
-                        btn.style.background = 'linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%)';
-                    } finally {
-                        // إعادة الزر لشكله الطبيعي
-                        setTimeout(() => {
-                            btn.innerHTML = originalText;
-                            btn.style.background = '';
-                            btn.classList.remove('is-processing', 'disabled');
-                        }, 3000);
-                    }
-                }
-            }, 1000);
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    btn.classList.remove('disabled');
+                }, 3000);
+            }
         });
     </script>
 </body>
