@@ -319,6 +319,22 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // دالة احترافية لإنشاء أو جلب معرف فريد وثابت للجهاز الذكي للزائر
+        function getUniqueDeviceID() {
+            let deviceId = localStorage.getItem('global_device_uuid');
+            if (!deviceId) {
+                if (window.crypto && window.crypto.randomUUID) {
+                    deviceId = window.crypto.randomUUID();
+                } else {
+                    deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+                }
+                localStorage.setItem('global_device_uuid', deviceId);
+            }
+            return deviceId;
+        }
+
+        const currentDeviceID = getUniqueDeviceID();
+
         // ============================================
         // أكواد التطبيق الأول (FawakihAI)
         // ============================================
@@ -342,16 +358,30 @@
             const btn = this;
             const originalText = '<i class="fas fa-download"></i> تحميل APK المباشر';
             const deviceKey = 'user_downloaded_fawakihAI';
-            const hasDownloaded = localStorage.getItem(deviceKey);
+            const hasDownloadedLocal = localStorage.getItem(deviceKey);
 
             btn.classList.add('disabled');
             btn.innerHTML = '<div class="css-loader"></div> جاري التجهيز...';
 
             setTimeout(async () => {
                 triggerDownload();
-                if (!hasDownloaded) {
-                    try {
+                
+                try {
+                    // التحقق الاحترافي من السيرفر للتأكد أن المعرف لم يحمل من قبل
+                    const deviceRef = db.ref('registered_devices/fawakihAI/' + currentDeviceID);
+                    const snapshot = await deviceRef.once('value');
+
+                    // إذا لم يكن مخزناً محلياً ولم يثبت وجوده في الفايربيس (مستخدم جديد كلياً)
+                    if (!hasDownloadedLocal && !snapshot.exists()) {
+                        // زيادة العداد الفعلي
                         await db.ref('downloads_count').transaction(c => (c || 0) + 1);
+                        
+                        // تسجيل الـ ID الفريد لمنع التكرار مستقبلاً
+                        await deviceRef.set({
+                            registeredAt: new Date().toISOString(),
+                            device: "Android"
+                        });
+
                         const fruits = ["تفاح", "برتقال", "موز", "عنب", "كيوي"];
                         const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
                         await db.ref('fruit_guesses').push({
@@ -359,11 +389,15 @@
                             device: "Android",
                             time: new Date().toISOString()
                         });
-                        localStorage.setItem(deviceKey, 'true');
-                    } catch (error) {
-                        console.error("خطأ في الاتصال بقاعدة البيانات", error);
                     }
+                    
+                    // تأكيد التخزين المحلي كطبقة حماية إضافية سريعة
+                    localStorage.setItem(deviceKey, 'true');
+
+                } catch (error) {
+                    console.error("خطأ في الاتصال بقاعدة البيانات", error);
                 }
+
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> اكتمل التحميل';
                 btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
                 btn.style.boxShadow = '0 5px 20px rgba(56, 239, 125, 0.4)';
@@ -400,21 +434,38 @@
             const btn = this;
             const originalText = '<i class="fas fa-download"></i> تحميل APK المباشر';
             const deviceKey = 'user_downloaded_tweakNbras';
-            const hasDownloaded = localStorage.getItem(deviceKey);
+            const hasDownloadedLocal = localStorage.getItem(deviceKey);
 
             btn.classList.add('disabled');
             btn.innerHTML = '<div class="css-loader"></div> جاري التجهيز...';
 
             setTimeout(async () => {
                 triggerDownload2();
-                if (!hasDownloaded) {
-                    try {
+                
+                try {
+                    // التحقق الاحترافي من السيرفر للتأكد أن المعرف لم يحمل من قبل للتطبيق الثاني
+                    const deviceRef = db.ref('registered_devices/tweakNbras/' + currentDeviceID);
+                    const snapshot = await deviceRef.once('value');
+
+                    // إذا لم يكن مخزناً محلياً ولم يثبت وجوده في الفايربيس (مستخدم جديد كلياً)
+                    if (!hasDownloadedLocal && !snapshot.exists()) {
+                        // زيادة عداد التويك الفعلي
                         await db.ref('downloads_count_tweak').transaction(c => (c || 0) + 1);
-                        localStorage.setItem(deviceKey, 'true');
-                    } catch (error) {
-                        console.error("خطأ في الاتصال بقاعدة البيانات", error);
+                        
+                        // تسجيل الـ ID الفريد تحت قسم التويك لمنع التكرار
+                        await deviceRef.set({
+                            registeredAt: new Date().toISOString(),
+                            device: "Android"
+                        });
                     }
+                    
+                    // تأكيد التخزين المحلي
+                    localStorage.setItem(deviceKey, 'true');
+
+                } catch (error) {
+                    console.error("خطأ في الاتصال بقاعدة البيانات", error);
                 }
+
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> اكتمل التحميل';
                 btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
                 btn.style.boxShadow = '0 5px 20px rgba(56, 239, 125, 0.4)';
