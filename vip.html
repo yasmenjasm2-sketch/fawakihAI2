@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام البث الذكي المستمر | FawakihAI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #334155;
+        }
+        h2 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+        .status-box {
+            background-color: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #1e293b;
+        }
+        .status-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4ade80;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #475569;
+            background-color: #334155;
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-stop { background-color: #ef4444; color: white; }
+        .btn-stop:hover { background-color: #dc2626; }
+        .btn-start { background-color: #10b981; color: white; }
+        .btn-start:hover { background-color: #059669; }
+        
+        .log-panel {
+            background-color: #020617;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            text-align: right;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 3px;
+        }
+        .bg-notice {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>نظام البث التلقائي المطور 🚀</h2>
+        <div class="subtitle">تطبيق FawakihAI - فواكه عشوائية وتنسيق احترافي</div>
+        
+        <div class="status-box">
+            <div id="systemStatus" class="status-text">🔄 النظام يعمل الآن في الخلفية...</div>
+            <small id="countdown" style="color: #64748b;"></small>
+        </div>
+
+        <label for="intervalInput">الوقت الفاصل بين الرسائل (بالثواني):</label>
+        <input type="number" id="intervalInput" value="10" min="3" onchange="updateInterval()">
+
+        <div class="controls">
+            <button class="btn-stop" onclick="stopAutomation()">إيقاف مؤقت</button>
+            <button class="btn-start" onclick="startAutomation()">تشغيل</button>
+        </div>
+
+        <label>سجل العمليات المباشر للبوت:</label>
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry" style="color: #e2e8f0;">[النظام] تم تشغيل لوحة التحكم بنجاح...</div>
+        </div>
+
+        <div class="bg-notice">
+            💡 <b>ملاحظة الخلفية:</b> تم دمج تقنية Web Worker لمنع توقف النظام عند قفل الشاشة أو تصغير المتصفح. (تأكد من إبقاء التبويب مفتوحاً وعدم إغلاقه نهائياً).
+        </div>
+    </div>
+
+    <script>
+        const BOT_TOKEN = "7566249177:AAG8DFr9IulZKkTteVFHc9TFp5qnMJ4sOVA";
+        const CHAT_ID = "-1003864597850"; 
+
+        const fruitsList = ["تفاح", "موز", "برتقال", "فراولة", "عنب", "مانجو", "بطيخ", "خوخ", "كرز", "أناناس", "كيوي", "رمان", "تين"];
+
+        let backgroundWorker = null;
+        let countdownTimer = null;
+        let intervalSeconds = 10; 
+        let timeLeft = intervalSeconds;
+        let isRunning = false;
+
+        window.onload = function() {
+            initWorker();
+            startAutomation();
+        };
+
+        function initWorker() {
+            const workerCode = `
+                let timer = null;
+                self.onmessage = function(e) {
+                    if (e.data.action === 'start') {
+                        clearInterval(timer);
+                        timer = setInterval(() => {
+                            self.postMessage({ action: 'tick' });
+                        }, e.data.interval * 1000);
+                    } else if (e.data.action === 'stop') {
+                        clearInterval(timer);
+                    }
+                };
+            `;
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            backgroundWorker = new Worker(URL.createObjectURL(blob));
+
+            backgroundWorker.onmessage = function(e) {
+                if (e.data.action === 'tick') {
+                    sendAutomaticMessage();
+                }
+            };
+        }
+
+        function startAutomation() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            document.getElementById("systemStatus").textContent = "🔄 النظام يعمل الآن في الخلفية...";
+            document.getElementById("systemStatus").style.color = "#4ade80";
+            addLog("تم تفعيل بث الخلفية المستمر.");
+            
+            sendAutomaticMessage();
+            backgroundWorker.postMessage({ action: 'start', interval: intervalSeconds });
+            startVisualCountdown();
+        }
+
+        function stopAutomation() {
+            isRunning = false;
+            backgroundWorker.postMessage({ action: 'stop' });
+            clearInterval(countdownTimer);
+            
+            document.getElementById("systemStatus").textContent = "🛑 النظام متوقف حالياً";
+            document.getElementById("systemStatus").style.color = "#ef4444";
+            document.getElementById("countdown").textContent = "";
+            addLog("تم إيقاف البث مؤقتاً.");
+        }
+
+        function updateInterval() {
+            const inputVal = parseInt(document.getElementById("intervalInput").value);
+            if (inputVal >= 3) {
+                intervalSeconds = inputVal;
+                addLog(`تم تحديث الفاصل الزمني إلى ${intervalSeconds} ثوانٍ.`);
+                if (isRunning) {
+                    backgroundWorker.postMessage({ action: 'start', interval: intervalSeconds });
+                    startVisualCountdown();
+                }
+            } else {
+                alert("يرجى اختيار وقت لا يقل عن 3 ثوانٍ لحماية البوت من الحظر.");
+                document.getElementById("intervalInput").value = 10;
+            }
+        }
+
+        function startVisualCountdown() {
+            clearInterval(countdownTimer);
+            timeLeft = intervalSeconds;
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    timeLeft = intervalSeconds;
+                }
+                document.getElementById("countdown").textContent = `الرسالة القادمة خلال: ${timeLeft} ثانية`;
+            }, 1000);
+        }
+
+        function generateRandomPlayerID() {
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            return `ID_${randomNum}`;
+        }
+
+        function sendAutomaticMessage() {
+            const randomPlayerId = generateRandomPlayerID();
+            
+            // تعديل: تم جعل اسم الفاكهة مجهول ومحمي بشكل احترافي لجميع المراسلات
+            const randomFruit = "مجهول 🔒";
+            
+            // تعديل النسب المئوية: تقليل احتمالية فشل الاتصال ليكون نادراً جداً (1% فقط)
+            const randChance = Math.random(); 
+            
+            let textMessage = "";
+            let typeText = "";
+
+            if (randChance < 0.01) { 
+                // احتمالية 1%: فشل الاتصال بالسيرفر (قليل جداً ونادر بناءً على طلبك)
+                typeText = "فشل اتصال ❌";
+                textMessage = `<b>🔴 فشل الاتصال بالسيرفر ❌</b>
+
+<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
+🧠 الذكاء الاصطناعي: <code>العقل 1</code>
+👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
+
+🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
+            
+            } else if (randChance < 0.06) {
+                // احتمالية 5%: ضغط سيرفر
+                typeText = "ضغط سيرفر ⚠";
+                textMessage = `<b>🟡 هناك ضغط على السيرفر ⚠</b>
+<i>سيتم المحاولة مرة أخرى...</i>
+
+<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
+🧠 الذكاء الاصطناعي: <code>العقل 1</code>
+👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
+
+🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
+            
+            } else {
+                // احتمالية 94%: التخمين الصحيح (الطبيعي والغالب)
+                typeText = "تخمين صحيح 🎯";
+                textMessage = `<b>🟢 التخمين الصحيح! 🎯</b>
+
+<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
+🧠 الذكاء الاصطناعي: <code>العقل 1</code>
+👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
+
+🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
+            }
+
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: textMessage,
+                    parse_mode: "HTML" 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    addLog(`✅ تم إرسال: [${typeText}] | الفاكهة: [${randomFruit}] | اللاعب: [${randomPlayerId}]`);
+                } else {
+                    addLog(`⚠️ تليجرام يرفض: ${data.description}`);
+                }
+            })
+            .catch(error => {
+                addLog("❌ خطأ في الاتصال بالشبكة!");
+                console.error("Error:", error);
+            });
+        }
+
+        function addLog(message) {
+            const logPanel = document.getElementById("logPanel");
+            const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
+            
+            const newEntry = document.createElement("div");
+            newEntry.className = "log-entry";
+            newEntry.textContent = `[${time}] ${message}`;
+            
+            logPanel.appendChild(newEntry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
