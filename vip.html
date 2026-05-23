@@ -241,7 +241,7 @@
             return '23' + str + '='; 
         }
 
-        // دالة ذكية لصناعة الصورة برمجياً داخل المتصفح (تخطي مشاكل الروابط الخارجية)
+        // دالة ذكية لصناعة الصورة برمجياً بشكل احترافي وأنيق
         function createDynamicImage() {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
@@ -249,23 +249,32 @@
                 canvas.height = 500;
                 const ctx = canvas.getContext('2d');
 
-                // رسم الخلفية المتدرجة البنفسجية المطابقة للصورة تماماً
+                // رسم الخلفية المتدرجة البنفسجية 
                 const gradient = ctx.createLinearGradient(0, 0, 500, 500);
-                gradient.addColorStop(0, '#9d4edd');   // بنفسجي فاتح علوي
-                gradient.addColorStop(0.5, '#7b2cbf'); // متوسط
-                gradient.addColorStop(1, '#3c096c');   // بنفسجي داكن سفلي
+                gradient.addColorStop(0, '#8b5cf6');   // بنفسجي زاهي علوي
+                gradient.addColorStop(1, '#4c1d95');   // بنفسجي داكن سفلي
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, 500, 500);
 
-                // إعدادات الخط والنص الأبيض المكتوب بالمنتصف
+                // إعدادات الظل للنص الرئيسي لإعطاء عمق واحترافية
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                ctx.shadowBlur = 15;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 5;
+
+                // إعدادات الخط الرئيسي (FawakihAI)
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+                ctx.font = 'bold 60px "Segoe UI", -apple-system, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                
-                // كتابة النص على سطرين متناسقين
-                ctx.fillText('Content not viewable', 250, 220);
-                ctx.fillText('in your region', 250, 275);
+                ctx.fillText('FawakihAI', 250, 230);
+
+                // إعدادات النص الفرعي (بدون ظل قوي ليكون واضحاً)
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetY = 2;
+                ctx.fillStyle = '#e2e8f0'; // لون أبيض مائل للرمادي الفاتح
+                ctx.font = 'normal 24px "Segoe UI", -apple-system, sans-serif';
+                ctx.fillText('Smart AI System 🚀', 250, 295);
 
                 // تحويل التصميم إلى ملف صورة مستقل بصيغة PNG
                 canvas.toBlob((blob) => {
@@ -292,19 +301,19 @@ ${randomFruit}
 🛡 System Encrypted`;
 
             try {
-                // 1. توليد الصورة البرمجية فوراً
+                // 1. توليد الصورة البرمجية الاحترافية فوراً
                 const imageFileBlob = await createDynamicImage();
                 
                 // 2. إعداد الـ FormData لإرسال الصورة كملف مرفق حقيقي ومباشر لـ Telegram
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
-                formData.append('photo', imageFileBlob, 'fawakih_status.png'); // الملف البرمجي المرفق
+                formData.append('photo', imageFileBlob, 'fawakih_premium.png'); 
                 formData.append('caption', captionText);
                 formData.append('parse_mode', 'HTML');
 
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
 
-                // 3. الإرسال (بدون وضع Content-Type في الـ headers ليقوم المتصفح بضبطه تلقائياً لـ Multipart)
+                // 3. الإرسال المباشر
                 const response = await fetch(url, {
                     method: "POST",
                     body: formData
@@ -312,7 +321,7 @@ ${randomFruit}
                 
                 const data = await response.json();
                 if (data.ok) {
-                    addLog(`✅ تم الإرسال بنجاح (صورة برمجية مرفوعة) | الايدي: [${randomPlayerId.substring(0,10)}...]`);
+                    addLog(`✅ تم الإرسال بنجاح (صورة FawakihAI) | الايدي: [${randomPlayerId.substring(0,10)}...]`);
                 } else {
                     addLog(`⚠️ تليجرام يرفض: ${data.description}`);
                 }
