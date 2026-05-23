@@ -116,7 +116,7 @@
 
     <div class="container">
         <h2>نظام البث التلقائي المطور 🚀</h2>
-        <div class="subtitle">تطبيق FawakihAI - فواكه عشوائية وتنسيق احترافي</div>
+        <div class="subtitle">تطبيق FawakihAI - رسائل مصورة واحترافية</div>
         
         <div class="status-box">
             <div id="systemStatus" class="status-text">🔄 النظام يعمل الآن في الخلفية...</div>
@@ -144,8 +144,6 @@
     <script>
         const BOT_TOKEN = "7566249177:AAG8DFr9IulZKkTteVFHc9TFp5qnMJ4sOVA";
         const CHAT_ID = "-1003864597850"; 
-
-        const fruitsList = ["تفاح", "موز", "برتقال", "فراولة", "عنب", "مانجو", "بطيخ", "خوخ", "كرز", "أناناس", "كيوي", "رمان", "تين"];
 
         let backgroundWorker = null;
         let countdownTimer = null;
@@ -221,85 +219,52 @@
             }
         }
 
-        function startVisualCountdown() {
-            clearInterval(countdownTimer);
-            timeLeft = intervalSeconds;
-            countdownTimer = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    timeLeft = intervalSeconds;
-                }
-                document.getElementById("countdown").textContent = `الرسالة القادمة خلال: ${timeLeft} ثانية`;
-            }, 1000);
-        }
-
-        function generateRandomPlayerID() {
-            const randomNum = Math.floor(100000 + Math.random() * 900000);
-            return `ID_${randomNum}`;
+        // توليد معرف يبدأ بـ 23 بشكل ذكي ويشبه التشفير
+        function generateVIPId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
+            let str = '';
+            for(let i=0; i<26; i++) {
+                str += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return '23' + str + '='; // يبدأ بـ 23 وينتهي بـ =
         }
 
         function sendAutomaticMessage() {
-            const randomPlayerId = generateRandomPlayerID();
+            const randomPlayerId = generateVIPId();
+            const randomFruit = "مجهولة 🔒";
             
-            // تعديل: تم جعل اسم الفاكهة مجهول ومحمي بشكل احترافي لجميع المراسلات
-            const randomFruit = "مجهول 🔒";
-            
-            // تعديل النسب المئوية: تقليل احتمالية فشل الاتصال ليكون نادراً جداً (1% فقط)
-            const randChance = Math.random(); 
-            
-            let textMessage = "";
-            let typeText = "";
+            // رابط خارجي لصورة تشبه المطلوبة تماماً
+            const imageUrl = "https://placehold.co/400x400/8b5cf6/ffffff?text=Content+not+viewable%5Cnin+your+region";
 
-            if (randChance < 0.01) { 
-                // احتمالية 1%: فشل الاتصال بالسيرفر (قليل جداً ونادر بناءً على طلبك)
-                typeText = "فشل اتصال ❌";
-                textMessage = `<b>🔴 فشل الاتصال بالسيرفر ❌</b>
+            // بناء النص ليكون مطابقاً للصورة المرفقة
+            const captionText = `تخمين صح - FawakihAI 🎯 ✈️
+ومتصل بسيرفر ✈️ 🎯
 
-<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
-🧠 الذكاء الاصطناعي: <code>العقل 1</code>
-👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
+🧠 مستوى الذكاء: العقل 1
+🍓 الفاكهة الذي سجلها لمستخدم: ${randomFruit}
 
-🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
-            
-            } else if (randChance < 0.06) {
-                // احتمالية 5%: ضغط سيرفر
-                typeText = "ضغط سيرفر ⚠";
-                textMessage = `<b>🟡 هناك ضغط على السيرفر ⚠</b>
-<i>سيتم المحاولة مرة أخرى...</i>
+📦 معرف الايدي لمستخدم (VIP):
+<code>${randomPlayerId}</code>
 
-<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
-🧠 الذكاء الاصطناعي: <code>العقل 1</code>
-👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
+🛡 System Encrypted`;
 
-🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
-            
-            } else {
-                // احتمالية 94%: التخمين الصحيح (الطبيعي والغالب)
-                typeText = "تخمين صحيح 🎯";
-                textMessage = `<b>🟢 التخمين الصحيح! 🎯</b>
-
-<blockquote>✨ الفاكهة : <b>${randomFruit}</b>
-🧠 الذكاء الاصطناعي: <code>العقل 1</code>
-👤 أيدي اللاعب: <code>${randomPlayerId}</code></blockquote>
-
-🚀 <i>هذه الرسالة تدل بأن اللاعب الذي لعب لقد فاز في تطبيقنا FawakihAI!</i>`;
-            }
-
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            // تغيير المسار لإرسال صورة (sendPhoto) بدلاً من نص عادي
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
 
             fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
-                    text: textMessage,
+                    photo: imageUrl,
+                    caption: captionText,
                     parse_mode: "HTML" 
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.ok) {
-                    addLog(`✅ تم إرسال: [${typeText}] | الفاكهة: [${randomFruit}] | اللاعب: [${randomPlayerId}]`);
+                    addLog(`✅ تم إرسال رسالة مصورة | الآيدي: [${randomPlayerId.substring(0,8)}...]`);
                 } else {
                     addLog(`⚠️ تليجرام يرفض: ${data.description}`);
                 }
