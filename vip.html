@@ -116,7 +116,7 @@
 
     <div class="container">
         <h2>نظام البث التلقائي المطور 🚀</h2>
-        <div class="subtitle">تطبيق FawakihAI - رسائل مصورة واحترافية</div>
+        <div class="subtitle">تطبيق FawakihAI - توليد صور ذاتية ومحمية</div>
         
         <div class="status-box">
             <div id="systemStatus" class="status-text">🔄 النظام يعمل الآن في الخلفية...</div>
@@ -137,7 +137,7 @@
         </div>
 
         <div class="bg-notice">
-            💡 <b>ملاحظة الخلفية:</b> تم دمج تقنية Web Worker لمنع توقف النظام عند قفل الشاشة أو تصغير المتصفح. (تأكد من إبقاء التبويب مفتوحاً وعدم إغلاقه نهائياً).
+            💡 <b>ملاحظة الخلفية:</b> تم دمج تقنية Web Worker المتقدمة والرفع المباشر لمنع توقف النظام وضمان تخطي مشاكل تليجرام للمحتوى الخارجي.
         </div>
     </div>
 
@@ -214,65 +214,112 @@
                     startVisualCountdown();
                 }
             } else {
-                alert("يرجى اختيار وقت لا يقل عن 3 ثوانٍ لحماية البوت من الحظر.");
+                alert("يرجى اختيار وقت لا يقل عن 3 ثوانٍ.");
                 document.getElementById("intervalInput").value = 10;
             }
         }
 
-        // توليد معرف يبدأ بـ 23 بشكل ذكي ويشبه التشفير
+        function startVisualCountdown() {
+            clearInterval(countdownTimer);
+            timeLeft = intervalSeconds;
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    timeLeft = intervalSeconds;
+                }
+                document.getElementById("countdown").textContent = `الرسالة القادمة خلال: ${timeLeft} ثانية`;
+            }, 1000);
+        }
+
+        // توليد معرف يبدأ بـ 23 بشكل ذكي ويشبه تماماً الصورة المطلوبة
         function generateVIPId() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
             let str = '';
-            for(let i=0; i<26; i++) {
+            for(let i=0; i<24; i++) {
                 str += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            return '23' + str + '='; // يبدأ بـ 23 وينتهي بـ =
+            return '23' + str + '='; 
         }
 
-        function sendAutomaticMessage() {
+        // دالة ذكية لصناعة الصورة برمجياً داخل المتصفح (تخطي مشاكل الروابط الخارجية)
+        function createDynamicImage() {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 500;
+                canvas.height = 500;
+                const ctx = canvas.getContext('2d');
+
+                // رسم الخلفية المتدرجة البنفسجية المطابقة للصورة تماماً
+                const gradient = ctx.createLinearGradient(0, 0, 500, 500);
+                gradient.addColorStop(0, '#9d4edd');   // بنفسجي فاتح علوي
+                gradient.addColorStop(0.5, '#7b2cbf'); // متوسط
+                gradient.addColorStop(1, '#3c096c');   // بنفسجي داكن سفلي
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 500, 500);
+
+                // إعدادات الخط والنص الأبيض المكتوب بالمنتصف
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // كتابة النص على سطرين متناسقين
+                ctx.fillText('Content not viewable', 250, 220);
+                ctx.fillText('in your region', 250, 275);
+
+                // تحويل التصميم إلى ملف صورة مستقل بصيغة PNG
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/png');
+            });
+        }
+
+        async function sendAutomaticMessage() {
             const randomPlayerId = generateVIPId();
             const randomFruit = "مجهولة 🔒";
-            
-            // رابط خارجي لصورة تشبه المطلوبة تماماً
-            const imageUrl = "https://placehold.co/400x400/8b5cf6/ffffff?text=Content+not+viewable%5Cnin+your+region";
 
-            // بناء النص ليكون مطابقاً للصورة المرفقة
+            // تنسيق النص ليتطابق مع الصورة بالرموز والسطور بوضوح
             const captionText = `تخمين صح - FawakihAI 🎯 ✈️
 ومتصل بسيرفر ✈️ 🎯
 
 🧠 مستوى الذكاء: العقل 1
-🍓 الفاكهة الذي سجلها لمستخدم: ${randomFruit}
+🍓 الفاكهة الذي سجلها لمستخدم:
+${randomFruit}
 
 📦 معرف الايدي لمستخدم (VIP):
 <code>${randomPlayerId}</code>
 
 🛡 System Encrypted`;
 
-            // تغيير المسار لإرسال صورة (sendPhoto) بدلاً من نص عادي
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+            try {
+                // 1. توليد الصورة البرمجية فوراً
+                const imageFileBlob = await createDynamicImage();
+                
+                // 2. إعداد الـ FormData لإرسال الصورة كملف مرفق حقيقي ومباشر لـ Telegram
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', imageFileBlob, 'fawakih_status.png'); // الملف البرمجي المرفق
+                formData.append('caption', captionText);
+                formData.append('parse_mode', 'HTML');
 
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    photo: imageUrl,
-                    caption: captionText,
-                    parse_mode: "HTML" 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+
+                // 3. الإرسال (بدون وضع Content-Type في الـ headers ليقوم المتصفح بضبطه تلقائياً لـ Multipart)
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: formData
+                });
+                
+                const data = await response.json();
                 if (data.ok) {
-                    addLog(`✅ تم إرسال رسالة مصورة | الآيدي: [${randomPlayerId.substring(0,8)}...]`);
+                    addLog(`✅ تم الإرسال بنجاح (صورة برمجية مرفوعة) | الايدي: [${randomPlayerId.substring(0,10)}...]`);
                 } else {
                     addLog(`⚠️ تليجرام يرفض: ${data.description}`);
                 }
-            })
-            .catch(error => {
-                addLog("❌ خطأ في الاتصال بالشبكة!");
+            } catch (error) {
+                addLog("❌ خطأ داخلي في نظام توليد الصورة أو الشبكة!");
                 console.error("Error:", error);
-            });
+            }
         }
 
         function addLog(message) {
