@@ -3,346 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام البث الذكي المستمر | FawakihAI</title>
+    <title>طلب خدمات API - fawakihAI</title>
+    <meta name="description" content="نموذج طلب خدمات API الخاصة بتطبيق fawakihAI.">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top, #1c053a, #090014);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            background: rgba(20, 5, 40, 0.7);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            color: #e6ccff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn:hover {
+            background: rgba(138, 43, 226, 0.3);
+            border-color: rgba(179, 102, 255, 0.8);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
         .container {
-            background-color: #1e293b;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 450px;
-            border: 1px solid #334155;
-        }
-        h2 {
+            max-width: 500px;
+            background: rgba(20, 5, 40, 0.6);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(138, 43, 226, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             text-align: center;
-            color: #38bdf8;
-            margin-bottom: 5px;
         }
-        .subtitle {
-            text-align: center;
-            font-size: 14px;
-            color: #94a3b8;
-            margin-bottom: 25px;
+
+        .icon-header {
+            font-size: 3rem;
+            color: #b366ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(179, 102, 255, 0.6);
+            animation: float-icon 3s ease-in-out infinite;
         }
-        .status-box {
-            background-color: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
+
+        .container h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            color: #b3a3cc;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            text-align: right;
             margin-bottom: 20px;
-            border: 1px solid #1e293b;
         }
-        .status-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: #4ade80;
-        }
-        label {
+
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #e6ccff;
         }
-        input {
+
+        .form-control {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #475569;
-            background-color: #334155;
+            padding: 14px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #ff3399;
+            box-shadow: 0 0 15px rgba(255, 51, 153, 0.3);
+            background: rgba(20, 5, 40, 0.8);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b366ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 15px;
+            padding-left: 40px;
+        }
+
+        select.form-control option {
+            background-color: #1c053a;
+            color: #fff;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            text-align: center;
-        }
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        button {
-            flex: 1;
-            padding: 12px;
-            font-size: 16px;
+            font-size: 1.2rem;
             font-weight: bold;
+            font-family: 'Cairo', sans-serif;
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-        .btn-stop { background-color: #ef4444; color: white; }
-        .btn-stop:hover { background-color: #dc2626; }
-        .btn-start { background-color: #10b981; color: white; }
-        .btn-start:hover { background-color: #059669; }
-        
-        .log-panel {
-            background-color: #020617;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 10px;
-            height: 150px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 12px;
-            color: #38bdf8;
-            text-align: right;
-        }
-        .log-entry {
-            margin-bottom: 5px;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 3px;
-        }
-        .bg-notice {
-            font-size: 11px;
-            color: #94a3b8;
-            text-align: center;
+            box-shadow: 0 5px 20px rgba(106, 17, 203, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             margin-top: 10px;
-            line-height: 1.4;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.6);
+        }
+
+        .success-msg {
+            display: none;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid #00e676;
+            color: #b3ffcc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <div class="top-bar">
+        <a href="index.html" class="back-btn" title="العودة للرئيسية">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
     <div class="container">
-        <h2>نظام البث التلقائي المطور 🚀</h2>
-        <div class="subtitle">تطبيق FawakihAI - توليد صور ذاتية ومحمية</div>
-        
-        <div class="status-box">
-            <div id="systemStatus" class="status-text">🔄 النظام يعمل الآن في الخلفية...</div>
-            <small id="countdown" style="color: #64748b;"></small>
+        <div class="icon-header">
+            <i class="fas fa-server"></i>
         </div>
+        <h1>طلب خدمة API</h1>
+        <p>احصل على مفتاح الوصول الخاص بك لدمج خدمات fawakihAI في مشروعك بكل سهولة.</p>
 
-        <label for="intervalInput">الوقت الفاصل بين الرسائل (بالثواني):</label>
-        <input type="number" id="intervalInput" value="10" min="3" onchange="updateInterval()">
+        <form id="apiForm">
+            <div class="form-group">
+                <label for="fullName"><i class="fas fa-user"></i> الاسم الكامل / اسم الشركة</label>
+                <input type="text" id="fullName" class="form-control" placeholder="أدخل الاسم..." required>
+            </div>
 
-        <div class="controls">
-            <button class="btn-stop" onclick="stopAutomation()">إيقاف مؤقت</button>
-            <button class="btn-start" onclick="startAutomation()">تشغيل</button>
-        </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                <input type="email" id="email" class="form-control" placeholder="example@domain.com" required>
+            </div>
 
-        <label>سجل العمليات المباشر للبوت:</label>
-        <div class="log-panel" id="logPanel">
-            <div class="log-entry" style="color: #e2e8f0;">[النظام] تم تشغيل لوحة التحكم بنجاح...</div>
-        </div>
+            <div class="form-group">
+                <label for="phone"><i class="fab fa-whatsapp"></i> رقم واتساب (للتواصل)</label>
+                <input type="tel" id="phone" class="form-control" placeholder="+966 5X XXX XXXX" required>
+            </div>
 
-        <div class="bg-notice">
-            💡 <b>ملاحظة الخلفية:</b> تم دمج تقنية Web Worker المتقدمة والرفع المباشر لمنع توقف النظام وضمان تخطي مشاكل تليجرام للمحتوى الخارجي.
-        </div>
+            <div class="form-group">
+                <label for="projectType"><i class="fas fa-briefcase"></i> نوع المشروع</label>
+                <select id="projectType" class="form-control" required>
+                    <option value="" disabled selected>-- اختر نوع المشروع --</option>
+                    <option value="commercial">مشروع تجاري</option>
+                    <option value="local">تطبيق محلي / شخصي</option>
+                    <option value="ecommerce">متجر إلكتروني</option>
+                    <option value="other">أخرى</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="usage"><i class="fas fa-chart-line"></i> حجم الاستخدام المتوقع (شهرياً)</label>
+                <select id="usage" class="form-control" required>
+                    <option value="" disabled selected>-- اختر الحجم المتوقع --</option>
+                    <option value="small">أقل من 10,000 طلب</option>
+                    <option value="medium">10,000 إلى 50,000 طلب</option>
+                    <option value="large">أكثر من 100,000 طلب (باقة VIP)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="details"><i class="fas fa-info-circle"></i> وصف مختصر للمشروع</label>
+                <textarea id="details" class="form-control" placeholder="حدثنا عن مشروعك وكيف تخطط لاستخدام الـ API..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> إرسال الطلب
+            </button>
+
+            <div class="success-msg" id="successMsg">
+                <i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سيتم التواصل معك قريباً لتزويدك بمفتاح الـ API.
+            </div>
+        </form>
     </div>
 
     <script>
-        const BOT_TOKEN = "7566249177:AAG8DFr9IulZKkTteVFHc9TFp5qnMJ4sOVA";
-        const CHAT_ID = "-1003864597850"; 
-
-        let backgroundWorker = null;
-        let countdownTimer = null;
-        let intervalSeconds = 10; 
-        let timeLeft = intervalSeconds;
-        let isRunning = false;
-
-        window.onload = function() {
-            initWorker();
-            startAutomation();
-        };
-
-        function initWorker() {
-            const workerCode = `
-                let timer = null;
-                self.onmessage = function(e) {
-                    if (e.data.action === 'start') {
-                        clearInterval(timer);
-                        timer = setInterval(() => {
-                            self.postMessage({ action: 'tick' });
-                        }, e.data.interval * 1000);
-                    } else if (e.data.action === 'stop') {
-                        clearInterval(timer);
-                    }
-                };
-            `;
-            const blob = new Blob([workerCode], { type: 'application/javascript' });
-            backgroundWorker = new Worker(URL.createObjectURL(blob));
-
-            backgroundWorker.onmessage = function(e) {
-                if (e.data.action === 'tick') {
-                    sendAutomaticMessage();
-                }
-            };
-        }
-
-        function startAutomation() {
-            if (isRunning) return;
-            isRunning = true;
+        document.getElementById('apiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            document.getElementById("systemStatus").textContent = "🔄 النظام يعمل الآن في الخلفية...";
-            document.getElementById("systemStatus").style.color = "#4ade80";
-            addLog("تم تفعيل بث الخلفية المستمر.");
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
             
-            sendAutomaticMessage();
-            backgroundWorker.postMessage({ action: 'start', interval: intervalSeconds });
-            startVisualCountdown();
-        }
+            // تأثير التحميل عند الضغط
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
 
-        function stopAutomation() {
-            isRunning = false;
-            backgroundWorker.postMessage({ action: 'stop' });
-            clearInterval(countdownTimer);
-            
-            document.getElementById("systemStatus").textContent = "🛑 النظام متوقف حالياً";
-            document.getElementById("systemStatus").style.color = "#ef4444";
-            document.getElementById("countdown").textContent = "";
-            addLog("تم إيقاف البث مؤقتاً.");
-        }
-
-        function updateInterval() {
-            const inputVal = parseInt(document.getElementById("intervalInput").value);
-            if (inputVal >= 3) {
-                intervalSeconds = inputVal;
-                addLog(`تم تحديث الفاصل الزمني إلى ${intervalSeconds} ثوانٍ.`);
-                if (isRunning) {
-                    backgroundWorker.postMessage({ action: 'start', interval: intervalSeconds });
-                    startVisualCountdown();
-                }
-            } else {
-                alert("يرجى اختيار وقت لا يقل عن 3 ثوانٍ.");
-                document.getElementById("intervalInput").value = 10;
-            }
-        }
-
-        function startVisualCountdown() {
-            clearInterval(countdownTimer);
-            timeLeft = intervalSeconds;
-            countdownTimer = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    timeLeft = intervalSeconds;
-                }
-                document.getElementById("countdown").textContent = `الرسالة القادمة خلال: ${timeLeft} ثانية`;
-            }, 1000);
-        }
-
-        // توليد معرف يبدأ بـ 23 بشكل ذكي ويشبه تماماً الصورة المطلوبة
-        function generateVIPId() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
-            let str = '';
-            for(let i=0; i<24; i++) {
-                str += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return '23' + str + '='; 
-        }
-
-        // دالة ذكية لصناعة الصورة برمجياً بشكل احترافي وأنيق
-        function createDynamicImage() {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 500;
-                canvas.height = 500;
-                const ctx = canvas.getContext('2d');
-
-                // رسم الخلفية المتدرجة البنفسجية 
-                const gradient = ctx.createLinearGradient(0, 0, 500, 500);
-                gradient.addColorStop(0, '#8b5cf6');   // بنفسجي زاهي علوي
-                gradient.addColorStop(1, '#4c1d95');   // بنفسجي داكن سفلي
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, 500, 500);
-
-                // إعدادات الظل للنص الرئيسي لإعطاء عمق واحترافية
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-                ctx.shadowBlur = 15;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 5;
-
-                // إعدادات الخط الرئيسي (FawakihAI)
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 60px "Segoe UI", -apple-system, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('FawakihAI', 250, 230);
-
-                // إعدادات النص الفرعي (بدون ظل قوي ليكون واضحاً)
-                ctx.shadowBlur = 4;
-                ctx.shadowOffsetY = 2;
-                ctx.fillStyle = '#e2e8f0'; // لون أبيض مائل للرمادي الفاتح
-                ctx.font = 'normal 24px "Segoe UI", -apple-system, sans-serif';
-                ctx.fillText('Smart AI System 🚀', 250, 295);
-
-                // تحويل التصميم إلى ملف صورة مستقل بصيغة PNG
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, 'image/png');
-            });
-        }
-
-        async function sendAutomaticMessage() {
-            const randomPlayerId = generateVIPId();
-            const randomFruit = "مجهولة 🔒";
-
-            // تنسيق النص ليتطابق مع الصورة بالرموز والسطور بوضوح
-            const captionText = `تخمين صح - FawakihAI 🎯 ✈️
-ومتصل بسيرفر ✈️ 🎯
-
-🧠 مستوى الذكاء: العقل 1
-🍓 الفاكهة الذي سجلها لمستخدم:
-${randomFruit}
-
-📦 معرف الايدي لمستخدم (VIP):
-<code>${randomPlayerId}</code>
-
-🛡 System Encrypted`;
-
-            try {
-                // 1. توليد الصورة البرمجية الاحترافية فوراً
-                const imageFileBlob = await createDynamicImage();
+            // محاكاة إرسال البيانات
+            setTimeout(() => {
+                document.getElementById('successMsg').style.display = 'block';
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                this.reset(); // تفريغ الحقول بعد الإرسال
                 
-                // 2. إعداد الـ FormData لإرسال الصورة كملف مرفق حقيقي ومباشر لـ Telegram
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', imageFileBlob, 'fawakih_premium.png'); 
-                formData.append('caption', captionText);
-                formData.append('parse_mode', 'HTML');
-
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
-
-                // 3. الإرسال المباشر
-                const response = await fetch(url, {
-                    method: "POST",
-                    body: formData
-                });
-                
-                const data = await response.json();
-                if (data.ok) {
-                    addLog(`✅ تم الإرسال بنجاح (صورة FawakihAI) | الايدي: [${randomPlayerId.substring(0,10)}...]`);
-                } else {
-                    addLog(`⚠️ تليجرام يرفض: ${data.description}`);
-                }
-            } catch (error) {
-                addLog("❌ خطأ داخلي في نظام توليد الصورة أو الشبكة!");
-                console.error("Error:", error);
-            }
-        }
-
-        function addLog(message) {
-            const logPanel = document.getElementById("logPanel");
-            const time = new Date().toLocaleTimeString('ar-EG', { hour12: false });
-            
-            const newEntry = document.createElement("div");
-            newEntry.className = "log-entry";
-            newEntry.textContent = `[${time}] ${message}`;
-            
-            logPanel.appendChild(newEntry);
-            logPanel.scrollTop = logPanel.scrollHeight;
-        }
+                // إخفاء الرسالة بعد 5 ثواني
+                setTimeout(() => {
+                    document.getElementById('successMsg').style.display = 'none';
+                }, 5000);
+            }, 1500);
+        });
     </script>
-
 </body>
 </html>
