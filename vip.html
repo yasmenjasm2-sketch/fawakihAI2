@@ -3,446 +3,642 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة خدمات API - fawakihAI</title>
-    <meta name="description" content="نموذج طلب خدمات API الخاصة بتطبيق fawakihAI.">
+    <title>fawakihAI | خدمات API والدعم</title>
+    <meta name="description" content="منصة fawakihAI - احصل على مفتاح API وتواصل مع الدعم.">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
         body {
             font-family: 'Cairo', sans-serif;
-            background: radial-gradient(circle at top, #1c053a, #090014);
-            color: #e0e0e0;
+            background: #0a0015;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
             overflow-x: hidden;
         }
 
-        /* حاوية الشاشات */
-        .screen {
-            display: none;
+        /* خلفية النجوم المتحركة */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(ellipse at center, #1a0030 0%, #0a0015 70%);
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite ease-in-out;
+            opacity: 0.6;
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+            }
+        }
+
+        /* الحاوية الرئيسية */
+        .main-container {
+            position: relative;
+            z-index: 10;
             width: 100%;
             max-width: 500px;
-            background: rgba(20, 5, 40, 0.6);
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            padding: 40px 30px;
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(138, 43, 226, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            text-align: center;
-            animation: fadeInScreen 0.5s ease-out forwards;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeInScreen {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .icon-header {
-            font-size: 3rem;
-            color: #b366ff;
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px rgba(179, 102, 255, 0.6);
-            animation: float-icon 3s ease-in-out infinite;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        p.desc {
-            color: #b3a3cc;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        /* أزرار التواصل والدعم */
-        .support-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .support-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 15px 10px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(138, 43, 226, 0.4);
-            transition: all 0.3s;
-        }
-        
-        .support-btn i {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            gap: 20px;
         }
 
-        .support-btn.whatsapp:hover { background: #25D366; border-color: #25D366; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
-        .support-btn.instagram:hover { background: #E1306C; border-color: #E1306C; box-shadow: 0 0 15px rgba(225, 48, 108, 0.4); }
-        .support-btn.email:hover { background: #ea4335; border-color: #ea4335; box-shadow: 0 0 15px rgba(234, 67, 53, 0.4); }
-
-        /* شروط الاستخدام */
-        .terms-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            text-align: right;
-            border: 1px solid rgba(138, 43, 226, 0.2);
-        }
-
-        .terms-box label {
-            display: flex;
+        /* الشاشات */
+        .screen {
+            width: 100%;
+            background: rgba(20, 5, 40, 0.65);
+            border: 1px solid rgba(138, 43, 226, 0.35);
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(138, 43, 226, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #e6ccff;
+            text-align: center;
+            animation: fadeSlide 0.5s ease;
+        }
+        .screen.active {
+            display: flex;
         }
 
-        .terms-box input[type="checkbox"] {
-            margin-left: 10px;
-            width: 18px;
-            height: 18px;
-            accent-color: #b366ff;
-            cursor: pointer;
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* نموذج الإدخال */
-        .form-group {
-            text-align: right;
-            margin-bottom: 20px;
+        /* رأس أيقونة */
+        .icon-header {
+            font-size: 3.2rem;
+            color: #b366ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 25px rgba(179, 102, 255, 0.7);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
-        .form-group label {
-            display: block;
+        h1 {
+            font-size: 2rem;
+            color: #ffffff;
             margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        p.subtitle {
+            color: #c7b3e5;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* أزرار */
+        .btn {
+            font-family: 'Cairo', sans-serif;
             font-weight: 600;
-            font-size: 0.95rem;
-            color: #e6ccff;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(138, 43, 226, 0.4);
-            border-radius: 12px;
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: #ff3399;
-            box-shadow: 0 0 15px rgba(255, 51, 153, 0.3);
-            background: rgba(20, 5, 40, 0.8);
-        }
-
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b366ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: left 15px center;
-            background-size: 15px;
-            padding-left: 40px;
-        }
-
-        select.form-control option { background-color: #1c053a; color: #fff; }
-
-        textarea.form-control { resize: vertical; min-height: 100px; }
-
-        /* الأزرار الرئيسية */
-        .main-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            font-family: 'Cairo', sans-serif;
             border: none;
-            border-radius: 15px;
+            border-radius: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(106, 17, 203, 0.4);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            width: 100%;
+            margin: 8px 0;
+            text-decoration: none;
         }
-
-        .main-btn:disabled {
-            background: #333;
-            color: #888;
-            box-shadow: none;
+        .btn-primary {
+            background: linear-gradient(135deg, #7b2ff7, #3b82f6);
+            color: white;
+            box-shadow: 0 8px 25px rgba(123, 47, 247, 0.45);
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 35px rgba(123, 47, 247, 0.7);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
+            filter: grayscale(0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            color: #e6ccff;
+        }
+        .btn-secondary:hover {
+            background: rgba(138, 43, 226, 0.25);
+            border-color: #b366ff;
+        }
+        .btn-support {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            color: #cfb3ff;
+            width: auto;
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+        }
+        .btn-support i {
+            font-size: 1.2rem;
         }
 
-        .main-btn:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.6);
+        .support-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin: 10px 0;
         }
 
-        .back-nav {
+        /* مربع الموافقة */
+        .agree-box {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            margin-bottom: 20px;
-            color: #b366ff;
-            cursor: pointer;
+            gap: 10px;
+            margin: 20px 0 0;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 18px;
+            border-radius: 14px;
+            width: 100%;
+            justify-content: center;
+            border: 1px solid rgba(179, 102, 255, 0.2);
             font-size: 0.9rem;
-            transition: color 0.3s;
+            color: #cfb3ff;
         }
-        
-        .back-nav:hover { color: #ff3399; }
-        .back-nav i { margin-left: 8px; }
+        .agree-box input[type="checkbox"] {
+            accent-color: #b366ff;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .link-like {
+            color: #e6ccff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-        .success-msg, .error-msg {
-            display: none;
-            padding: 15px;
+        /* نموذج API */
+        .form-group {
+            text-align: right;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #e6ccff;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 15px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(138, 43, 226, 0.45);
             border-radius: 12px;
-            margin-top: 20px;
-            font-size: 0.95rem;
-            animation: fadeInScreen 0.5s ease;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #ff3399;
+            box-shadow: 0 0 18px rgba(255, 51, 153, 0.3);
+            background: rgba(20, 5, 40, 0.8);
+        }
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b366ff' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 16px;
+            padding-left: 45px;
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 95px;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 20;
+        }
+        .back-btn {
+            background: rgba(20, 5, 40, 0.7);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            color: #e6ccff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+        }
+        .back-btn:hover {
+            background: rgba(138, 43, 226, 0.35);
+            border-color: #b366ff;
+            color: #fff;
         }
 
         .success-msg {
+            display: none;
             background: rgba(0, 230, 118, 0.1);
             border: 1px solid #00e676;
             color: #b3ffcc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+            font-size: 0.9rem;
+            width: 100%;
         }
 
-        .error-msg {
-            background: rgba(255, 61, 0, 0.1);
-            border: 1px solid #ff3d00;
-            color: #ffcccc;
+        /* مودال الشروط */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-
-        @keyframes float-icon {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        .modal-overlay.active {
+            display: flex;
         }
-
-        @media (max-width: 480px) {
-            .screen { padding: 30px 20px; }
-            .support-grid { gap: 10px; }
-            .support-btn { padding: 12px 5px; font-size: 0.85rem; }
+        .modal {
+            background: rgba(15, 3, 30, 0.9);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            color: #e0d0ff;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            animation: modalPop 0.3s ease;
+        }
+        @keyframes modalPop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .modal h2 {
+            color: #b366ff;
+            margin-bottom: 15px;
+        }
+        .modal p {
+            font-size: 0.85rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .modal .close-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: #b366ff;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div id="welcomeScreen" class="screen active">
-        <div class="icon-header">
-            <i class="fas fa-microchip"></i>
-        </div>
-        <h1>بوابة fawakihAI</h1>
-        <p class="desc">مرحباً بك في منصة خدماتنا. يمكنك التواصل مع الدعم الفني أو طلب مفتاح API الخاص بمشروعك.</p>
+    <!-- خلفية النجوم -->
+    <div class="stars" id="starsContainer"></div>
 
-        <div class="support-grid">
-            <a href="https://wa.me/رقمك_هنا" target="_blank" class="support-btn whatsapp">
-                <i class="fab fa-whatsapp"></i> واتساب
-            </a>
-            <a href="https://instagram.com/حسابك_هنا" target="_blank" class="support-btn instagram">
-                <i class="fab fa-instagram"></i> انستجرام
-            </a>
-            <a href="mailto:الايميل_هنا" class="support-btn email">
-                <i class="fas fa-envelope"></i> إيميل
-            </a>
-        </div>
+    <div class="main-container">
+        <!-- الشاشة الرئيسية -->
+        <div id="homeScreen" class="screen active">
+            <div class="icon-header"><i class="fas fa-brain"></i></div>
+            <h1>fawakihAI</h1>
+            <p class="subtitle">قوة الذكاء الاصطناعي بين يديك</p>
 
-        <div class="terms-box">
-            <label>
-                <input type="checkbox" id="termsCheckbox">
-                أوافق على شروط الاستخدام وسياسات الخدمة الخاصة بالمنصة. أقر بأن البيانات المدخلة صحيحة.
-            </label>
-        </div>
-
-        <button id="goToFormBtn" class="main-btn" disabled>
-            <i class="fas fa-arrow-left"></i> طلب خدمات API
-        </button>
-    </div>
-
-    <div id="formScreen" class="screen">
-        <div class="back-nav" id="backToWelcome">
-            <i class="fas fa-arrow-right"></i> العودة للقائمة
-        </div>
-        
-        <div class="icon-header">
-            <i class="fas fa-server"></i>
-        </div>
-        <h1>نموذج الطلب</h1>
-        <p class="desc">قم بتعبئة بيانات مشروعك وسنقوم بتزويدك بالصلاحيات اللازمة.</p>
-
-        <form id="apiForm">
-            <div class="form-group">
-                <label for="fullName"><i class="fas fa-building"></i> اسم المشروع أو الشركة</label>
-                <input type="text" id="fullName" class="form-control" placeholder="أدخل اسم مشروعك..." required>
-            </div>
-
-            <div class="form-group">
-                <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
-                <input type="email" id="email" class="form-control" placeholder="example@domain.com" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone"><i class="fab fa-whatsapp"></i> رقم التواصل</label>
-                <input type="tel" id="phone" class="form-control" placeholder="+966 5X XXX XXXX" required>
-            </div>
-
-            <div class="form-group">
-                <label for="projectType"><i class="fas fa-briefcase"></i> نوع المشروع</label>
-                <select id="projectType" class="form-control" required>
-                    <option value="" disabled selected>-- اختر نوع المشروع --</option>
-                    <option value="تطبيق اندرويد/IOS">تطبيق موبايل</option>
-                    <option value="مشروع ويب">موقع ويب / لوحة تحكم</option>
-                    <option value="سكربت / أداة تقنية">سكربت / أداة تقنية</option>
-                    <option value="أخرى">أخرى</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="details"><i class="fas fa-info-circle"></i> تفاصيل الاستخدام</label>
-                <textarea id="details" class="form-control" placeholder="اشرح لنا باختصار كيف سيتم استخدام خدماتنا في مشروعك..." required></textarea>
-            </div>
-
-            <button type="submit" class="main-btn" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> إرسال الطلب الآن
+            <button id="apiRequestBtn" class="btn btn-primary" disabled>
+                <i class="fas fa-key"></i> طلب خدمات API
             </button>
 
-            <div class="success-msg" id="successMsg">
-                <i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سنتواصل معك قريباً.
+            <div class="support-row">
+                <a href="https://wa.me/966500000000" target="_blank" class="btn btn-support" title="واتساب">
+                    <i class="fab fa-whatsapp"></i> واتساب
+                </a>
+                <a href="https://instagram.com/fawakihai" target="_blank" class="btn btn-support" title="انستغرام">
+                    <i class="fab fa-instagram"></i> انستا
+                </a>
+                <a href="mailto:support@fawakih.ai" class="btn btn-support" title="بريد إلكتروني">
+                    <i class="fas fa-envelope"></i> ايميل
+                </a>
             </div>
-            <div class="error-msg" id="errorMsg">
-                <i class="fas fa-exclamation-triangle"></i> حدث خطأ أثناء الإرسال، تأكد من اتصالك بالإنترنت.
+
+            <button id="openTermsBtn" class="btn btn-secondary">
+                <i class="fas fa-file-contract"></i> حقوق الاستخدام والشروط
+            </button>
+
+            <div class="agree-box">
+                <input type="checkbox" id="agreeCheckbox">
+                <label for="agreeCheckbox">أوافق على <span class="link-like" id="inlineTermsLink">الشروط والأحكام</span></label>
             </div>
-        </form>
+        </div>
+
+        <!-- شاشة نموذج API -->
+        <div id="formScreen" class="screen">
+            <div class="top-bar">
+                <div class="back-btn" id="backToHomeBtn" title="العودة للرئيسية">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+            <div class="icon-header"><i class="fas fa-server"></i></div>
+            <h1>طلب خدمة API</h1>
+            <p class="subtitle">املأ البيانات وسنتواصل معك لتزويدك بمفتاح الوصول</p>
+
+            <form id="apiForm" style="width:100%;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> الاسم الكامل / اسم الشركة</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="أدخل الاسم..." required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                    <input type="email" id="email" class="form-control" placeholder="example@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp"></i> رقم واتساب</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="+966 5X XXX XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-briefcase"></i> نوع المشروع</label>
+                    <select id="projectType" class="form-control" required>
+                        <option value="" disabled selected>-- اختر النوع --</option>
+                        <option value="تجاري">مشروع تجاري</option>
+                        <option value="شخصي">تطبيق شخصي</option>
+                        <option value="متجر">متجر إلكتروني</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-chart-line"></i> حجم الاستخدام الشهري المتوقع</label>
+                    <select id="usage" class="form-control" required>
+                        <option value="" disabled selected>-- اختر الحجم --</option>
+                        <option value="أقل من 10,000">أقل من 10,000 طلب</option>
+                        <option value="10,000 - 50,000">10,000 - 50,000 طلب</option>
+                        <option value="أكثر من 100,000">أكثر من 100,000 (VIP)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> وصف المشروع</label>
+                    <textarea id="details" class="form-control" placeholder="اشرح كيف ستستخدم API..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> إرسال الطلب
+                </button>
+                <div class="success-msg" id="successMsg">
+                    <i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سنتواصل معك قريباً.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- مودال الشروط -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal">
+            <h2><i class="fas fa-shield-alt"></i> حقوق الاستخدام والشروط</h2>
+            <p>
+                باستخدامك لخدمات fawakihAI API، فإنك توافق على الآتي:<br><br>
+                • جميع المفاتيح تمنح للاستخدام الشخصي أو المشروع المسجل فقط.<br>
+                • يمنع مشاركة المفتاح أو بيعه لطرف ثالث.<br>
+                • الفريق غير مسؤول عن سوء الاستخدام أو الأضرار الناتجة.<br>
+                • قد نتواصل معك لتأكيد بيانات المشروع قبل التفعيل.<br>
+                • نحتفظ بالحق في إيقاف الخدمة عند المخالفة.<br>
+                • يرجى احترام سياسات الخصوصية وعدم جمع بيانات المستخدمين دون إذن.
+            </p>
+            <button class="close-btn" id="closeModalBtn">حسناً، فهمت</button>
+        </div>
     </div>
 
     <script>
-        // التبديل بين الشاشات
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const formScreen = document.getElementById('formScreen');
-        const termsCheckbox = document.getElementById('termsCheckbox');
-        const goToFormBtn = document.getElementById('goToFormBtn');
-        const backToWelcome = document.getElementById('backToWelcome');
+        (function() {
+            // ============== توليد النجوم ==============
+            const starsContainer = document.getElementById('starsContainer');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 4 + 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                starsContainer.appendChild(star);
+            }
 
-        // تفعيل زر الدخول عند الموافقة على الشروط
-        termsCheckbox.addEventListener('change', function() {
-            goToFormBtn.disabled = !this.checked;
-        });
+            // ============== عناصر الواجهة ==============
+            const homeScreen = document.getElementById('homeScreen');
+            const formScreen = document.getElementById('formScreen');
+            const apiRequestBtn = document.getElementById('apiRequestBtn');
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            const openTermsBtn = document.getElementById('openTermsBtn');
+            const inlineTermsLink = document.getElementById('inlineTermsLink');
+            const backToHomeBtn = document.getElementById('backToHomeBtn');
+            const termsModal = document.getElementById('termsModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const apiForm = document.getElementById('apiForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const successMsg = document.getElementById('successMsg');
 
-        // الانتقال لشاشة النموذج
-        goToFormBtn.addEventListener('click', function() {
-            welcomeScreen.classList.remove('active');
-            formScreen.classList.add('active');
-        });
+            // ============== تفعيل / تعطيل زر API ==============
+            function updateApiButton() {
+                apiRequestBtn.disabled = !agreeCheckbox.checked;
+            }
+            agreeCheckbox.addEventListener('change', updateApiButton);
+            updateApiButton();
 
-        // العودة للشاشة الرئيسية
-        backToWelcome.addEventListener('click', function() {
-            formScreen.classList.remove('active');
-            welcomeScreen.classList.add('active');
-        });
+            // ============== فتح المودال ==============
+            function openTermsModal() {
+                termsModal.classList.add('active');
+            }
 
-        // تشفير مبسط ومجزأ لبيانات التليجرام (Base64)
-        // هذا يمنع السحب العشوائي للمعلومات من الكود المصدري
-        const _0xT1 = 'TnpjeU9Ea3lOVE13T1RwQlFVVjVUMlUw';
-        const _0xT2 = 'ZmxWWlRFcG9RM1YxYzBOM1ZXdFRTVT';
-        const _0xT3 = 'R5ZDBaSVJUY1JZa2t3Y3c9PQ==';
-        const _0xC1 = 'TlRrNU9ESTFNR00yTnc9PQ==';
-
-        function _d(_x) { return decodeURIComponent(atob(atob(_x)).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); }
-
-        // إرسال البيانات
-        document.getElementById('apiForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const originalText = btn.innerHTML;
-            
-            // جلب القيم من الحقول
-            const pName = document.getElementById('fullName').value;
-            const pEmail = document.getElementById('email').value;
-            const pPhone = document.getElementById('phone').value;
-            const pType = document.getElementById('projectType').value;
-            const pDetails = document.getElementById('details').value;
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إرسال البيانات...';
-            btn.disabled = true;
-
-            // تجميع رسالة التليجرام
-            const msg = `🚀 *طلب خدمة API جديد*\n\n` +
-                        `🏢 *اسم المشروع:* ${pName}\n` +
-                        `📧 *البريد:* ${pEmail}\n` +
-                        `📱 *واتساب:* ${pPhone}\n` +
-                        `💼 *النوع:* ${pType}\n` +
-                        `📝 *التفاصيل:* ${pDetails}`;
-
-            // فك التشفير وقت الإرسال فقط
-            const tk = _d(_0xT1 + _0xT2 + _0xT3);
-            const cid = _d(_0xC1);
-            const tgUrl = `https://api.telegram.org/bot${tk}/sendMessage`;
-
-            fetch(tgUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: cid,
-                    text: msg,
-                    parse_mode: 'Markdown'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.ok) {
-                    document.getElementById('successMsg').style.display = 'block';
-                    document.getElementById('errorMsg').style.display = 'none';
-                    document.getElementById('apiForm').reset();
-                } else {
-                    throw new Error('Telegram API Error');
-                }
-            })
-            .catch(error => {
-                document.getElementById('errorMsg').style.display = 'block';
-                document.getElementById('successMsg').style.display = 'none';
-                console.error(error);
-            })
-            .finally(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                
-                setTimeout(() => {
-                    document.getElementById('successMsg').style.display = 'none';
-                    document.getElementById('errorMsg').style.display = 'none';
-                }, 6000);
+            function closeTermsModal() {
+                termsModal.classList.remove('active');
+            }
+            openTermsBtn.addEventListener('click', openTermsModal);
+            inlineTermsLink.addEventListener('click', openTermsModal);
+            closeModalBtn.addEventListener('click', closeTermsModal);
+            termsModal.addEventListener('click', function(e) {
+                if (e.target === termsModal) closeTermsModal();
             });
-        });
+
+            // ============== التنقل بين الشاشات ==============
+            apiRequestBtn.addEventListener('click', function() {
+                if (!agreeCheckbox.checked) {
+                    alert('يرجى الموافقة على الشروط والأحكام أولاً.');
+                    return;
+                }
+                homeScreen.classList.remove('active');
+                formScreen.classList.add('active');
+            });
+
+            backToHomeBtn.addEventListener('click', function() {
+                formScreen.classList.remove('active');
+                homeScreen.classList.add('active');
+                // إخفاء رسالة النجاح إن وجدت
+                successMsg.style.display = 'none';
+            });
+
+            // ============== إرسال إلى تيليجرام (مشفر) ==============
+            // ⚠️ القيم التالية مشفرة بطريقة base64 معكوسة لحماية أولية
+            const REV_ENC_TOKEN = "==wM0kIYbR7ETFHw8IMkUwGsuuChJLYVf0eOyEAA:9035829277"
+                .split('').reverse().join(''); // base64 الأصلي بعد عكسه
+            const REV_ENC_CHAT = "==wNjc2MDU1ODk5N".split('').reverse().join('');
+
+            function getToken() {
+                // فك تشفير base64 بعد عكس السلسلة
+                return atob(REV_ENC_TOKEN.split('').reverse().join(''));
+            }
+
+            function getChatId() {
+                return atob(REV_ENC_CHAT.split('').reverse().join(''));
+            }
+
+            async function sendToTelegram(formData) {
+                const token = getToken();
+                const chatId = getChatId();
+                const text = `📩 طلب API جديد:\n` +
+                    `👤 الاسم: ${formData.fullName}\n` +
+                    `📧 البريد: ${formData.email}\n` +
+                    `📱 واتساب: ${formData.phone}\n` +
+                    `📂 نوع المشروع: ${formData.projectType}\n` +
+                    `📊 حجم الاستخدام: ${formData.usage}\n` +
+                    `📝 التفاصيل: ${formData.details || 'لا يوجد'}\n` +
+                    `🕒 الوقت: ${new Date().toLocaleString('ar-SA')}`;
+
+                const url = `https://api.telegram.org/bot${token}/sendMessage`;
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: text,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                    const result = await response.json();
+                    if (!result.ok) throw new Error(result.description);
+                    return true;
+                } catch (error) {
+                    console.error('Telegram error:', error);
+                    alert('حدث خطأ أثناء إرسال الطلب. تأكد من الاتصال أو راجع الدعم.');
+                    return false;
+                }
+            }
+
+            // ============== معالجة النموذج ==============
+            apiForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // جمع البيانات
+                const formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    projectType: document.getElementById('projectType').value,
+                    usage: document.getElementById('usage').value,
+                    details: document.getElementById('details').value.trim()
+                };
+
+                // تأثير التحميل
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+                submitBtn.disabled = true;
+
+                // إرسال للتيليجرام
+                const success = await sendToTelegram(formData);
+
+                if (success) {
+                    successMsg.style.display = 'block';
+                    apiForm.reset();
+                    // إخفاء رسالة النجاح بعد 6 ثوان
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 6000);
+                }
+
+                // إعادة الزر لوضعه
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+
+            // ============== إغلاق المودال بزر Escape ==============
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && termsModal.classList.contains('active')) {
+                    closeTermsModal();
+                }
+            });
+
+        })();
     </script>
 </body>
 </html>
