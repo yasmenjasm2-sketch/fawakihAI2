@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>مركز الدعم الفني - FawakihAI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -33,14 +33,19 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        /* استخدام 100dvh لحل مشكلة الكيبورد في الموبايل */
+        html, body {
+            height: 100dvh; 
+            width: 100%;
+            overflow: hidden;
             background: var(--bg-grad-1);
             color: var(--text-main);
-            height: 100vh;
+        }
+
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
         #app-container {
@@ -57,7 +62,7 @@
         /* --- Header --- */
         .header {
             background: var(--header-bg);
-            padding: 20px 25px;
+            padding: 15px 20px; /* تقليل الحشوة العلوية قليلاً للمساحة */
             border-radius: 0 0 25px 25px;
             display: flex;
             align-items: center;
@@ -66,6 +71,7 @@
             z-index: 10;
             position: relative;
             border-bottom: 2px solid rgba(176, 38, 255, 0.3);
+            flex-shrink: 0; /* لمنع الانضغاط */
         }
 
         .header-info {
@@ -75,8 +81,8 @@
         }
 
         .avatar {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: 2px solid var(--primary-accent);
             object-fit: cover;
@@ -90,14 +96,14 @@
         }
 
         .header-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             color: #FFFFFF;
         }
 
         .header-status {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--success);
             text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
@@ -107,9 +113,9 @@
             background: rgba(176, 38, 255, 0.15);
             color: var(--text-highlight);
             border: 1px solid rgba(176, 38, 255, 0.3);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -123,7 +129,7 @@
         .chat-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 15px;
+            padding: 15px 15px;
             display: flex;
             flex-direction: column;
             scroll-behavior: smooth;
@@ -158,7 +164,7 @@
         }
 
         .bubble {
-            max-width: 82%;
+            max-width: 85%;
             padding: 12px 16px;
             display: flex;
             flex-direction: column;
@@ -251,19 +257,21 @@
         /* --- Input Area --- */
         .input-area {
             background: var(--header-bg);
-            padding: 15px 20px;
+            padding: 10px 15px;
             border-radius: 30px 30px 0 0;
             display: flex;
             flex-direction: column;
             box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
             border-top: 1px solid rgba(176, 38, 255, 0.15);
+            flex-shrink: 0; /* لمنع الانضغاط عند فتح الكيبورد */
+            padding-bottom: max(10px, env(safe-area-inset-bottom)); /* دعم الآيفون */
         }
 
         .top-input-row {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             gap: 10px;
         }
 
@@ -291,7 +299,7 @@
         .chat-box-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .input-container {
@@ -320,26 +328,27 @@
         .message-input::placeholder { color: var(--text-muted); }
 
         .send-btn {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 15px rgba(176, 38, 255, 0.4);
             transition: transform 0.1s;
+            flex-shrink: 0;
         }
         .send-btn:active { transform: scale(0.9); }
 
         /* Toast */
         .toast {
             position: absolute;
-            bottom: 100px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(17, 8, 31, 0.95);
@@ -353,6 +362,7 @@
             transition: opacity 0.3s;
             z-index: 100;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            white-space: nowrap;
         }
         
         #file-input { display: none; }
@@ -377,13 +387,13 @@
 
     <div class="input-area">
         <div class="top-input-row">
-            <span class="selected-file-text" id="selected-file-text">تم إرفاق الصورة جاهزة للإرسال ✓</span>
+            <span class="selected-file-text" id="selected-file-text">تم إرفاق الصورة ✓</span>
             <button class="attach-btn" onclick="document.getElementById('file-input').click()">📎 إرفاق صورة</button>
             <input type="file" id="file-input" accept="image/*" onchange="handleFileSelect(event)">
         </div>
         <div class="chat-box-row">
             <div class="input-container">
-                <input type="text" class="message-input" id="message-input" placeholder="اكتب استفسارك هنا..." onkeypress="handleEnter(event)">
+                <input type="text" class="message-input" id="message-input" placeholder="اكتب استفسارك هنا..." onkeypress="handleEnter(event)" onfocus="scrollToBottom()">
             </div>
             <button class="send-btn" onclick="sendMessage()">➤</button>
         </div>
@@ -393,6 +403,18 @@
 </div>
 
 <script>
+    // التعامل مع الكيبورد في الموبايل
+    const appContainer = document.getElementById('app-container');
+    const visualViewport = window.visualViewport;
+
+    if (visualViewport) {
+        visualViewport.addEventListener('resize', () => {
+            // تحديث ارتفاع الحاوية بناءً على المساحة المرئية الفعلية
+            appContainer.style.height = `${visualViewport.height}px`;
+            scrollToBottom();
+        });
+    }
+
     const ENC_BOT_TOKEN = "NzU2NjI0OTE3NzpBQUc4REZyOUl1bFpLa1R0ZVZGSGM5VEZwNXFuTUo0c09WQQ==";
     const ENC_CHAT_ID = "NTk5ODI1MDM2Nw==";
 
@@ -410,6 +432,9 @@
     let selectedImageBase64 = null;
     let isAdminTyping = false;
     let lastUpdateId = parseInt(localStorage.getItem("last_update_id") || "0");
+    
+    // نظام استقبال الرسائل في الخلفية باستخدام Web Worker لو أمكن، أو Interval عادي
+    let pollInterval;
 
     function init() {
         if (!myUserId) {
@@ -423,6 +448,13 @@
 
         renderTickets();
         startPolling();
+        
+        // محاولة إبقاء الاتصال نشطاً حتى في حالة الخمول
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                startPolling();
+            }
+        });
     }
 
     function showToast(msg) {
@@ -536,7 +568,10 @@
     }
 
     function handleEnter(e) {
-        if(e.key === 'Enter') sendMessage();
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
     }
 
     async function sendMessage() {
@@ -547,6 +582,9 @@
             showToast("يرجى كتابة رسالة أو إرفاق صورة أولاً");
             return;
         }
+        
+        // إغلاق الكيبورد بعد الإرسال لتحسين التجربة
+        inputEl.blur();
 
         const caption = `رسالة دعم فني
 
@@ -622,10 +660,13 @@ ${msg}
 
     // --- تحديث نظام استقبال الرسائل لمنع التكرار ---
     function startPolling() {
-        setInterval(async () => {
+        if(pollInterval) clearInterval(pollInterval);
+        
+        pollInterval = setInterval(async () => {
             if (!navigator.onLine) return;
             try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?timeout=30&offset=${lastUpdateId}`);
+                // استخدام long polling بمدة 10 ثواني لتقليل استهلاك البطارية والبيانات
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?timeout=10&offset=${lastUpdateId}`);
                 if (!res.ok) return;
                 const data = await res.json();
                 
@@ -657,7 +698,7 @@ ${msg}
                     }
                 }
             } catch(e) {}
-        }, 3000);
+        }, 3000); // الفحص كل 3 ثواني
     }
 
     function processAdminReply(reply) {
@@ -690,6 +731,11 @@ ${msg}
             
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             renderTickets();
+            
+            // إشعار صوتي بسيط إذا كان مدعوماً
+            try {
+                if('vibrate' in navigator) navigator.vibrate(200);
+            } catch(e) {}
             
         }, 1200); // محاكاة وقت الكتابة
     }
