@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مركز الدعم الفني - FawakihAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* تعديل الألوان لتكون بخلفية سوداء عميقة وبنفسجي مضيء */
+            --bg-grad-1: #05050A;
+            --bg-grad-2: #080812;
+            --bg-grad-3: #0A0A15;
+            --header-bg: #11081F;
+            --primary-accent: #B026FF;
+            --user-bubble-1: #B026FF;
+            --user-bubble-2: #8015C2;
+            --admin-bubble-bg: #11081F;
+            --input-bg: #0A0512;
+            --text-main: #FFFFFF;
+            --text-muted: #9CA3AF;
+            --text-highlight: #D8B4FE;
+            --success: #34D399;
+            --danger: #F87171;
+            --warning: #FBBF24;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-grad-1);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 600px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        /* --- Header --- */
+        .header {
+            background: var(--header-bg);
+            padding: 20px 25px;
+            border-radius: 0 0 25px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 5px 20px rgba(176, 38, 255, 0.15);
+            z-index: 10;
+            position: relative;
+            border-bottom: 2px solid rgba(176, 38, 255, 0.3);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-accent);
+            object-fit: cover;
+            background-color: var(--bg-grad-1);
+            box-shadow: 0 0 10px rgba(176, 38, 255, 0.4);
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #FFFFFF;
+        }
+
+        .header-status {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--success);
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+        }
+
+        .clear-btn {
+            background: rgba(176, 38, 255, 0.15);
+            color: var(--text-highlight);
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:active {
+            transform: scale(0.95);
+            background: rgba(176, 38, 255, 0.3);
+        }
+
+        /* --- Chat Area --- */
+        .chat-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: rgba(176, 38, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .message-row {
+            display: flex;
+            margin-bottom: 20px;
+            width: 100%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-user {
+            justify-content: flex-start;
+        }
+
+        .msg-admin {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            max-width: 82%;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .bubble-user {
+            background: linear-gradient(135deg, var(--user-bubble-1), var(--user-bubble-2));
+            border-radius: 20px 20px 20px 0;
+            margin-left: 20px;
+            box-shadow: 0 4px 15px rgba(176, 38, 255, 0.2);
+        }
+
+        .bubble-admin {
+            background: var(--admin-bubble-bg);
+            border: 1px solid rgba(176, 38, 255, 0.2);
+            border-radius: 20px 20px 0 20px;
+            margin-right: 10px;
+        }
+
+        .admin-avatar-small {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 1px solid var(--primary-accent);
+            align-self: flex-end;
+            object-fit: cover;
+            margin-left: 8px;
+        }
+
+        .msg-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .msg-time {
+            font-size: 0.65rem;
+            align-self: flex-end;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        .bubble-user .msg-time { color: #F3E8FF; }
+        .bubble-admin .msg-time { color: var(--text-muted); align-self: flex-start; }
+
+        .admin-name {
+            font-size: 0.8rem;
+            color: var(--primary-accent);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .msg-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .link-btn {
+            background: rgba(176, 38, 255, 0.2);
+            border: 1px solid var(--primary-accent);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 8px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .link-btn:active { background: rgba(176, 38, 255, 0.4); }
+
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            color: var(--primary-accent);
+            font-style: italic;
+            font-size: 0.9rem;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* --- Input Area --- */
+        .input-area {
+            background: var(--header-bg);
+            padding: 15px 20px;
+            border-radius: 30px 30px 0 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(176, 38, 255, 0.15);
+        }
+
+        .top-input-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .attach-btn {
+            background: rgba(176, 38, 255, 0.1);
+            color: var(--text-highlight);
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .attach-btn:active { transform: scale(0.95); }
+
+        .selected-file-text {
+            font-size: 0.75rem;
+            color: var(--success);
+            display: none;
+        }
+
+        .chat-box-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-container {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid rgba(176, 38, 255, 0.4);
+            border-radius: 25px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .message-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.95rem;
+            padding: 12px 0;
+            resize: none;
+            outline: none;
+            height: 45px;
+            font-family: inherit;
+        }
+        .message-input::placeholder { color: var(--text-muted); }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(176, 38, 255, 0.4);
+            transition: transform 0.1s;
+        }
+        .send-btn:active { transform: scale(0.9); }
+
+        /* Toast */
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(17, 8, 31, 0.95);
+            border: 1px solid var(--primary-accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        
+        #file-input { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div class="header">
+        <div class="header-info">
+            <img src="https://ui-avatars.com/api/?name=SU&background=B026FF&color=fff&rounded=true" alt="Support" class="avatar">
+            <div class="header-text">
+                <span class="header-title">مركز الدعم الفني</span>
+                <span class="header-status">متصل الآن 🟢</span>
+            </div>
+        </div>
+        <button class="clear-btn" onclick="clearChat()">مسح السجل</button>
+    </div>
+
+    <div class="chat-scroll" id="chat-container">
+        </div>
+
+    <div class="input-area">
+        <div class="top-input-row">
+            <span class="selected-file-text" id="selected-file-text">تم إرفاق الصورة جاهزة للإرسال ✓</span>
+            <button class="attach-btn" onclick="document.getElementById('file-input').click()">📎 إرفاق صورة</button>
+            <input type="file" id="file-input" accept="image/*" onchange="handleFileSelect(event)">
+        </div>
+        <div class="chat-box-row">
+            <div class="input-container">
+                <input type="text" class="message-input" id="message-input" placeholder="اكتب استفسارك هنا..." onkeypress="handleEnter(event)">
+            </div>
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+</div>
+
+<script>
+    const ENC_BOT_TOKEN = "NzU2NjI0OTE3NzpBQUc4REZyOUl1bFpLa1R0ZVZGSGM5VEZwNXFuTUo0c09WQQ==";
+    const ENC_CHAT_ID = "NTk5ODI1MDM2Nw==";
+
+    const BOT_TOKEN = atob(ENC_BOT_TOKEN);
+    const CHAT_ID = atob(ENC_CHAT_ID);
+
+    let myUserId = localStorage.getItem("my_user_id");
+    let deviceId = localStorage.getItem("device_id");
+    let ticketsList = JSON.parse(localStorage.getItem("secure_tickets_data_web") || "[]");
+    
+    // فلتر لمنع تكرار معالجة نفس الرسالة من البوت
+    let processedUpdates = JSON.parse(localStorage.getItem("processed_updates") || "[]");
+    
+    let selectedImageFile = null;
+    let selectedImageBase64 = null;
+    let isAdminTyping = false;
+    let lastUpdateId = parseInt(localStorage.getItem("last_update_id") || "0");
+
+    function init() {
+        if (!myUserId) {
+            myUserId = "ID-" + (10000 + Math.floor(Math.random() * 90000));
+            localStorage.setItem("my_user_id", myUserId);
+        }
+        if (!deviceId) {
+            deviceId = "WEB-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            localStorage.setItem("device_id", deviceId);
+        }
+
+        renderTickets();
+        startPolling();
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.style.opacity = 1;
+        setTimeout(() => toast.style.opacity = 0, 3000);
+    }
+
+    function getCurrentTime() {
+        return new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById("chat-container");
+        setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+    }
+
+    function renderTickets() {
+        const container = document.getElementById("chat-container");
+        container.innerHTML = "";
+
+        if (ticketsList.length === 0 && !isAdminTyping) {
+            container.innerHTML = `
+                <div style="text-align:center; color: var(--text-muted); margin-top: 50px; line-height: 1.8;">
+                    أهلاً بك في مركز الدعم الفني<br>نحن متصلون الآن، كيف يمكننا مساعدتك؟
+                </div>
+            `;
+        }
+
+        ticketsList.forEach(t => {
+            if (t.userMessage || t.imageUri) {
+                const row = document.createElement("div");
+                row.className = "message-row msg-user";
+                let imgHtml = t.imageUri ? `<img src="${t.imageUri}" class="msg-image" alt="Attachment">` : "";
+                let textHtml = t.userMessage ? `<span class="msg-text">${t.userMessage}</span>` : "";
+                
+                row.innerHTML = `
+                    <div class="bubble bubble-user">
+                        ${imgHtml}
+                        ${textHtml}
+                        <span class="msg-time">${t.timestamp || "الآن"}</span>
+                    </div>
+                `;
+                container.appendChild(row);
+            }
+
+            if (t.isReplied && t.adminReply) {
+                const row = document.createElement("div");
+                row.className = "message-row msg-admin";
+                
+                let msgText = t.adminReply;
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                let linksHtml = "";
+                let urls = msgText.match(urlRegex);
+                if(urls) {
+                    urls.forEach(url => {
+                        linksHtml += `<a href="${url}" target="_blank" class="link-btn">🔗 فتح الرابط المرفق</a>`;
+                    });
+                }
+
+                row.innerHTML = `
+                    <img src="https://ui-avatars.com/api/?name=SU&background=B026FF&color=fff&rounded=true" class="admin-avatar-small" alt="Admin">
+                    <div class="bubble bubble-admin">
+                        <span class="admin-name">فريق الدعم</span>
+                        <span class="msg-text">${msgText}</span>
+                        ${linksHtml}
+                        <span class="msg-time">${t.timestamp || "الآن"}</span>
+                    </div>
+                `;
+                container.appendChild(row);
+            }
+        });
+
+        if (isAdminTyping) {
+            const row = document.createElement("div");
+            row.className = "message-row msg-admin";
+            row.innerHTML = `
+                <img src="https://ui-avatars.com/api/?name=SU&background=B026FF&color=fff&rounded=true" class="admin-avatar-small" alt="Admin">
+                <div class="bubble bubble-admin">
+                    <span class="typing-indicator">جاري الكتابة...</span>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        scrollToBottom();
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedImageFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedImageBase64 = e.target.result;
+                const txt = document.getElementById("selected-file-text");
+                txt.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function clearChat() {
+        if(confirm("هل أنت متأكد من مسح جميع رسائل المحادثة؟")) {
+            ticketsList = [];
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            renderTickets();
+            showToast("تم مسح المحادثة بنجاح");
+        }
+    }
+
+    function handleEnter(e) {
+        if(e.key === 'Enter') sendMessage();
+    }
+
+    async function sendMessage() {
+        const inputEl = document.getElementById("message-input");
+        const msg = inputEl.value.trim();
+
+        if (!msg && !selectedImageFile) {
+            showToast("يرجى كتابة رسالة أو إرفاق صورة أولاً");
+            return;
+        }
+
+        const caption = `رسالة دعم فني
+
+رقم المستخدم: \`${myUserId}\`
+الرسالة:
+${msg}
+
+للرد، انسخ رقم المستخدم وضعه في بداية رسالتك.`;
+        const currentTime = getCurrentTime();
+
+        const ticket = {
+            ticketId: myUserId,
+            userMessage: msg,
+            adminReply: "",
+            isReplied: false,
+            imageUri: selectedImageBase64,
+            timestamp: currentTime
+        };
+        ticketsList.push(ticket);
+        renderTickets();
+
+        inputEl.value = "";
+        selectedImageFile = null;
+        selectedImageBase64 = null;
+        document.getElementById("selected-file-text").style.display = "none";
+        document.getElementById("file-input").value = "";
+
+        try {
+            let success = false;
+            if (ticket.imageUri) {
+                success = await sendPhotoApi(caption, ticket.imageUri);
+            } else {
+                success = await sendTextApi(caption);
+            }
+
+            if (success) {
+                localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            } else {
+                throw new Error("API failed");
+            }
+        } catch (e) {
+            showToast("عذراً، فشل الإرسال");
+            ticketsList.pop();
+            renderTickets();
+        }
+    }
+
+    async function sendTextApi(text) {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `chat_id=${CHAT_ID}&parse_mode=Markdown&text=${encodeURIComponent(text)}`
+        });
+        return res.ok;
+    }
+
+    async function sendPhotoApi(caption, base64Data) {
+        const fetchRes = await fetch(base64Data);
+        const blob = await fetchRes.blob();
+        
+        const fd = new FormData();
+        fd.append("chat_id", CHAT_ID);
+        fd.append("parse_mode", "Markdown");
+        fd.append("caption", caption);
+        fd.append("photo", blob, "upload.jpg");
+
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: fd
+        });
+        return res.ok;
+    }
+
+    // --- تحديث نظام استقبال الرسائل لمنع التكرار ---
+    function startPolling() {
+        setInterval(async () => {
+            if (!navigator.onLine) return;
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?timeout=30&offset=${lastUpdateId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                for (let i=0; i<data.result.length; i++) {
+                    let update = data.result[i];
+                    
+                    // تحديث lastUpdateId دائماً لتنظيف السيرفر
+                    if (update.update_id >= lastUpdateId) {
+                        lastUpdateId = update.update_id + 1;
+                        localStorage.setItem("last_update_id", lastUpdateId);
+                    }
+
+                    // التحقق ما إذا كانت هذه الرسالة تمت معالجتها سابقاً لمنع التكرار نهائياً
+                    if (!processedUpdates.includes(update.update_id)) {
+                        processedUpdates.push(update.update_id);
+                        
+                        // الاحتفاظ بآخر 50 رسالة فقط في الفلتر لعدم استهلاك الذاكرة
+                        if(processedUpdates.length > 50) processedUpdates.shift();
+                        localStorage.setItem("processed_updates", JSON.stringify(processedUpdates));
+
+                        if (update.message && update.message.text) {
+                            let text = update.message.text;
+                            // التأكد من أن الرد موجه لهذا المستخدم
+                            if (text.includes(myUserId) && !text.includes("رسالة دعم فني")) {
+                                let cleanReply = text.replace(myUserId, "").replace(/^[:\-]/, "").trim();
+                                processAdminReply(cleanReply);
+                            }
+                        }
+                    }
+                }
+            } catch(e) {}
+        }, 3000);
+    }
+
+    function processAdminReply(reply) {
+        isAdminTyping = true;
+        renderTickets();
+        
+        setTimeout(() => {
+            isAdminTyping = false;
+            const rcvTime = getCurrentTime();
+            let attached = false;
+            
+            // إرفاق الرد بأول تذكرة مفتوحة
+            for (let i=0; i<ticketsList.length; i++) {
+                if (!ticketsList[i].isReplied && ticketsList[i].ticketId === myUserId) {
+                    ticketsList[i].adminReply = reply;
+                    ticketsList[i].isReplied = true;
+                    ticketsList[i].timestamp = rcvTime;
+                    attached = true;
+                    break;
+                }
+            }
+            
+            // إذا لم تكن هناك تذكرة مفتوحة (الرد جاء مستقلاً)
+            if (!attached) {
+                ticketsList.push({
+                    ticketId: myUserId, userMessage: "", adminReply: reply,
+                    isReplied: true, imageUri: "", timestamp: rcvTime
+                });
+            }
+            
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            renderTickets();
+            
+        }, 1200); // محاكاة وقت الكتابة
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
