@@ -362,6 +362,70 @@
             transform: translateY(-3px);
         }
 
+        /* قسم الدليل والخصوصية الجديد */
+        .info-card {
+            margin-top: 25px;
+            padding: 22px 18px;
+            background: rgba(20, 5, 40, 0.8);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #b366ff, #ff3399, #66ccff);
+        }
+
+        .info-card h3 {
+            color: #e6ccff;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            color: #b3b3b3;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .info-link-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(138, 43, 226, 0.15);
+            border: 1px solid rgba(138, 43, 226, 0.6);
+            color: #e6ccff;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .info-link-btn:hover {
+            background: rgba(138, 43, 226, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+            border-color: rgba(179, 102, 255, 0.9);
+        }
+
         /* قسم API */
         .api-section {
             margin-top: 20px;
@@ -550,35 +614,16 @@
             <i class="fas fa-download"></i> تحميل APK المباشر
         </a>
 
-        <hr style="border: 0; border-top: 1px solid rgba(138, 43, 226, 0.3); margin: 35px 0 25px 0;">
-
-        <div class="ai-badge">
-            <span class="ai-dot" style="background-color: #ff3399; box-shadow: 0 0 12px #ff3399;"></span>تطبيق مدعوم بالذكاء الاصطناعي
+        <!-- قسم الدليل والخصوصية الجديد بدلاً من تطبيق النرد -->
+        <div class="info-card">
+            <h3><i class="fas fa-shield-alt"></i> الخصوصية ودليل الاستخدام</h3>
+            <p>
+                تعرف على كيفية استخدام التطبيق بشكل صحيح، واطلع على حقوق الخصوصية وشروط الاستخدام. كما نتيح لك قراءة آراء المستخدمين الآخرين وترك تعليقك وملاحظاتك لتطوير خدماتنا.
+            </p>
+            <a href="https://yasmenjasm2-sketch.github.io/totoman/" target="_blank" class="info-link-btn">
+                <i class="fas fa-external-link-alt"></i> الانتقال للموقع التفصيلي
+            </a>
         </div>
-
-        <div class="android-logo">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M35 14.5c0-.83-.67-1.5-1.5-1.5h-19c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h19c.83 0 1.5-.67 1.5-1.5zM12 21c0-1.1.9-2 2-2h20c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2h-20c-1.1 0-2-.9-2-2V21zm22-9.62l2.31-2.31c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L32.41 10.1c-2.43-1-5.18-1.47-8.41-1.47s-5.98.47-8.41 1.47L13.1 7.66c-.39-.39-1.02-.39-1.41 0s-.39 1.02 0 1.41L14 11.38C10.87 13.71 9 17.14 9 21h30c0-3.86-1.87-7.29-5-9.62zM18 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" fill="#A4C639"/>
-            </svg>
-        </div>
-
-        <h1>🎲 Tweak Nbras</h1>
-        <p style="margin-bottom: 5px; color: #b3b3b3;">تطبيق تويك السرعه لتحليل النرد يلا لايف</p>
-        <p style="font-size: 0.8rem; color: #A4C639;"><i class="fab fa-android"></i> متاح للأندرويد فقط</p>
-
-        <div class="accuracy-info">
-            <span class="accuracy-dot"></span>
-            <span>⚡ يعمل بدقة <strong>99.2%</strong> باستخدام خوارزميات ذكاء اصطناعي متطورة</span>
-        </div>
-
-        <div class="counter-wrapper">
-            <span class="counter-box" id="downloadCount2">0</span>
-            <span class="counter-label">مستخدم للتطبيق</span>
-        </div>
-
-        <a href="#" id="downloadLink2" class="download-btn" style="background: linear-gradient(135deg, #ff3399 0%, #b366ff 100%); box-shadow: 0 5px 20px rgba(255, 51, 153, 0.4);">
-            <i class="fas fa-download"></i> تحميل APK المباشر
-        </a>
 
         <div class="api-section">
             <i class="fas fa-plug"></i> <strong>روابط خدمة API:</strong><br>
@@ -641,7 +686,7 @@
         const currentDeviceID = getUniqueDeviceID();
 
         // ============================================
-        // أكواد التطبيق الأول (FawakihAI)
+        // أكواد التطبيق (FawakihAI)
         // ============================================
         db.ref('downloads_count').on('value', snap => {
             const count = snap.val() || 0;
@@ -711,74 +756,6 @@
                     btn.innerHTML = originalText;
                     btn.style.background = '';
                     btn.style.boxShadow = '';
-                    btn.classList.remove('disabled');
-                }, 3000);
-            }, 1200);
-        });
-
-        // ============================================
-        // أكواد التطبيق الثاني (Tweak Nbras)
-        // ============================================
-        db.ref('downloads_count_tweak').on('value', snap => {
-            const count = snap.val() || 0;
-            document.getElementById('downloadCount2').innerText = count.toLocaleString() + "+";
-        });
-
-        function triggerDownload2() {
-            const link = document.createElement('a');
-            link.href = "app/base1.apk";
-            link.download = "TweakNbras.apk";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        document.getElementById('downloadLink2').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (this.classList.contains('disabled')) return;
-            const btn = this;
-            const originalText = '<i class="fas fa-download"></i> تحميل APK المباشر';
-            const deviceKey = 'user_downloaded_tweakNbras';
-            const hasDownloadedLocal = localStorage.getItem(deviceKey);
-
-            btn.classList.add('disabled');
-            btn.innerHTML = '<div class="css-loader"></div> جاري التجهيز...';
-
-            setTimeout(async () => {
-                triggerDownload2();
-
-                try {
-                    // التحقق الاحترافي من السيرفر للتأكد أن المعرف لم يحمل من قبل للتطبيق الثاني
-                    const deviceRef = db.ref('registered_devices/tweakNbras/' + currentDeviceID);
-                    const snapshot = await deviceRef.once('value');
-
-                    // إذا لم يكن مخزناً محلياً ولم يثبت وجوده في الفايربيس (مستخدم جديد كلياً)
-                    if (!hasDownloadedLocal && !snapshot.exists()) {
-                        // زيادة عداد التويك الفعلي
-                        await db.ref('downloads_count_tweak').transaction(c => (c || 0) + 1);
-
-                        // تسجيل الـ ID الفريد تحت قسم التويك لمنع التكرار
-                        await deviceRef.set({
-                            registeredAt: new Date().toISOString(),
-                            device: "Android"
-                        });
-                    }
-
-                    // تأكيد التخزين المحلي
-                    localStorage.setItem(deviceKey, 'true');
-
-                } catch (error) {
-                    console.error("خطأ في الاتصال بقاعدة البيانات", error);
-                }
-
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> اكتمل التحميل';
-                btn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-                btn.style.boxShadow = '0 5px 20px rgba(56, 239, 125, 0.4)';
-
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = 'linear-gradient(135deg, #ff3399 0%, #b366ff 100%)';
-                    btn.style.boxShadow = '0 5px 20px rgba(255, 51, 153, 0.4)';
                     btn.classList.remove('disabled');
                 }, 3000);
             }, 1200);
