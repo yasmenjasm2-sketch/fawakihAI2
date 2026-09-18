@@ -565,25 +565,19 @@
 
         .review-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             margin-bottom: 6px;
         }
 
-        .reviewer-name {
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: #e5e7eb;
-        }
-
         .review-stars {
             color: #fbbf24;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
         }
 
         .review-text {
-            font-size: 0.82rem;
-            color: #9ca3af;
+            font-size: 0.85rem;
+            color: #d1d5db;
             line-height: 1.5;
         }
 
@@ -783,7 +777,7 @@
                 </div>
                 <div class="app-category">ترفيه • أدوات • ذكاء اصطناعي</div>
                 <div class="app-rating-inline">
-                    <span>4.6</span>
+                    <span id="mainHeaderRating">4.6</span>
                     <i class="fas fa-star"></i>
                     <span>(12.4K تقييم)</span>
                 </div>
@@ -817,7 +811,7 @@
                 <div class="stat-label">تنزيل</div>
             </div>
             <div class="stat-box">
-                <div class="stat-value">4.6 <i class="fas fa-star" style="font-size:0.75rem; color:#fbbf24;"></i></div>
+                <div class="stat-value" id="gridRatingValue">4.6 <i class="fas fa-star" style="font-size:0.75rem; color:#fbbf24;"></i></div>
                 <div class="stat-label">تقييم</div>
             </div>
             <div class="stat-box">
@@ -906,18 +900,17 @@
         <div class="reviews-section">
             <div class="section-header-title">
                 <span>التقييمات والمراجعات</span>
-                <span style="font-size:0.85rem; color:#fbbf24; font-weight:normal;">★ 4.6 من 5</span>
+                <span id="avgRatingDisplay" style="font-size:0.85rem; color:#fbbf24; font-weight:normal;">★ 4.6 من 5</span>
             </div>
 
             <!-- القائمة الديناميكية للتقييمات -->
             <div class="reviews-list" id="reviewsContainer">
-                <div style="text-align:center; color:#888; font-size:0.8rem; padding:10px;">جاري تحميل التقييمات الحقيقية...</div>
+                <div style="text-align:center; color:#888; font-size:0.8rem; padding:10px;">جاري تحميل التقييمات...</div>
             </div>
 
-            <!-- نموذج إضافة تقييم حقيقي إلى Firebase -->
+            <!-- نموذج إضافة تقييم حقيقي إلى Firebase بدون حقل الاسم -->
             <div class="add-review-form">
                 <h4><i class="fas fa-pen-alt"></i> أضف تقييمك للتطبيق</h4>
-                <input type="text" id="reviewerName" class="form-control" placeholder="اسمك (أو مستخدم أندرويد)" maxlength="30">
                 <select id="reviewerRating" class="form-control">
                     <option value="5">★★★★★ (5/5) ممتاز جداً</option>
                     <option value="4">★★★★☆ (4/5) جيد جداً</option>
@@ -997,12 +990,11 @@
         // ============================================
         db.ref('downloads_count').on('value', snap => {
             const count = snap.val() || 0;
-            // تنسيق العدد بطريقة عصرية (مثل +86K)
             document.getElementById('downloadCount').innerText = count > 0 ? "+" + count.toLocaleString() : "+86K";
         });
 
         // ============================================
-        // جلب وقراءة التقييمات الحقيقية من الفايربيس
+        // جلب وقراءة التقييمات وحسابها تلقائياً من الفايربيس
         // ============================================
         db.ref('app_reviews').on('value', snapshot => {
             const reviewsContainer = document.getElementById('reviewsContainer');
@@ -1011,34 +1003,47 @@
 
             if (data) {
                 const reviewsArr = Object.values(data).reverse(); // إظهار التقييم الأحدث في الأعلى
+                
+                let totalStars = 0;
+                let count = 0;
+
                 reviewsArr.forEach(rev => {
                     const starsCount = parseInt(rev.rating) || 5;
+                    totalStars += starsCount;
+                    count++;
+
                     const starsHtml = '★'.repeat(starsCount) + '☆'.repeat(5 - starsCount);
                     
                     const item = document.createElement('div');
                     item.className = 'review-item';
                     item.innerHTML = `
                         <div class="review-header">
-                            <span class="reviewer-name">${escapeHtml(rev.name || 'مستخدم أندرويد')}</span>
                             <span class="review-stars">${starsHtml}</span>
                         </div>
                         <p class="review-text">${escapeHtml(rev.comment || 'تطبيق ممتاز وتوقع دقيق جداً!')}</p>
                     `;
                     reviewsContainer.appendChild(item);
                 });
+
+                // حساب متوسط التقييم وتحديثه ديناميكياً
+                if (count > 0) {
+                    const avgRating = (totalStars / count).toFixed(1);
+                    document.getElementById('avgRatingDisplay').innerText = `★ ${avgRating} من 5`;
+                    document.getElementById('mainHeaderRating').innerText = avgRating;
+                    document.getElementById('gridRatingValue').innerHTML = `${avgRating} <i class="fas fa-star" style="font-size:0.75rem; color:#fbbf24;"></i>`;
+                }
+
             } else {
-                // تقييمات افتراضية مبدئية إذا كانت القاعدة فارغة
+                // تقييمات افتراضية مبدئية بدون أسماء
                 reviewsContainer.innerHTML = `
                     <div class="review-item">
                         <div class="review-header">
-                            <span class="reviewer-name">أحمد المالكي</span>
                             <span class="review-stars">★★★★★</span>
                         </div>
                         <p class="review-text">تطبيق رائع جداً وتخمين الفواكه يعمل بدقة عالية على يلا لايف!</p>
                     </div>
                     <div class="review-item">
                         <div class="review-header">
-                            <span class="reviewer-name">مستخدم أندرويد</span>
                             <span class="review-stars">★★★★☆</span>
                         </div>
                         <p class="review-text">التصميم أنيق جداً والسرعة في إعطاء التوقع ممتازة.</p>
@@ -1053,10 +1058,9 @@
         }
 
         // ============================================
-        // إرسال تقييم جديد إلى سيرفر الفايربيس
+        // إرسال تقييم جديد إلى سيرفر الفايربيس (بدون أسماء)
         // ============================================
         document.getElementById('submitReviewBtn').addEventListener('click', async function() {
-            const name = document.getElementById('reviewerName').value.trim() || 'مستخدم أندرويد';
             const rating = parseInt(document.getElementById('reviewerRating').value) || 5;
             const comment = document.getElementById('reviewerComment').value.trim();
 
@@ -1071,7 +1075,6 @@
 
             try {
                 await db.ref('app_reviews').push({
-                    name: name,
                     rating: rating,
                     comment: comment,
                     deviceId: currentDeviceID,
