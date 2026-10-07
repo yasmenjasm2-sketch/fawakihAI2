@@ -752,9 +752,91 @@
                 height: 270px;
             }
         }
+
+        /* =========================================
+           ستايلات النافذة المنبثقة للصورة (hdaj.jpg) 
+           ========================================= */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(9, 3, 20, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 20px;
+        }
+
+        .welcome-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-content {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(138, 43, 226, 0.4);
+            transform: translateY(50px) scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .welcome-overlay.show .welcome-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .welcome-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            display: block;
+            border: 2px solid rgba(168, 85, 247, 0.5);
+        }
+
+        .close-welcome-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #e63946;
+            color: white;
+            border: 2px solid #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.5);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-welcome-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: #ff4d4d;
+        }
     </style>
 </head>
 <body>
+
+    <!-- نافذة الدخول الأولى (صورة hdaj.jpg) -->
+    <div id="welcomeOverlay" class="welcome-overlay">
+        <div class="welcome-content">
+            <button id="closeWelcome" class="close-welcome-btn" title="إغلاق"><i class="fas fa-times"></i></button>
+            <img src="hdaj.jpg" alt="حقوق وشروط الاستخدام" class="welcome-img" onerror="this.src='https://via.placeholder.com/400x500/150a2a/a855f7?text=hdaj.jpg';">
+        </div>
+    </div>
 
     <div class="top-bar">
         <a href="vip.html" class="settings-btn tooltip" data-tooltip="طلب خدمات API" title="طلب خدمات API">
@@ -984,6 +1066,31 @@
         }
 
         const currentDeviceID = getUniqueDeviceID();
+
+        // ============================================
+        // كود اظهار نافذة الترحيب (صورة الحقوق hdaj.jpg)
+        // ============================================
+        document.addEventListener("DOMContentLoaded", function() {
+            const overlay = document.getElementById('welcomeOverlay');
+            const closeBtn = document.getElementById('closeWelcome');
+            
+            // تحقق إذا كان المستخدم قد دخل مسبقاً لرؤية الصورة
+            const hasSeenWelcome = localStorage.getItem('hasSeenWelcome_fawakihAI_app');
+            
+            if (!hasSeenWelcome) {
+                // إظهار النافذة ببطء بعد نصف ثانية من التحميل
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 500);
+            }
+
+            // إغلاق النافذة عند الضغط على الـ X
+            closeBtn.addEventListener('click', function() {
+                overlay.classList.remove('show');
+                // حفظ البيانات حتى لا تظهر له مرة أخرى
+                localStorage.setItem('hasSeenWelcome_fawakihAI_app', 'true');
+            });
+        });
 
         // ============================================
         // عداد التنزيلات المباشر من السيرفر (Firebase)
