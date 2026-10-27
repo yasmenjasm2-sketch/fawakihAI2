@@ -738,22 +738,8 @@
             }
         }, true);
 
-        // كشف أدوات المطور المفتوحة (Docked)
-        let _blocked = false;
-        function _checkDevtools() {
-            if (_blocked) return;
-            if (window.outerWidth > 0 && window.innerWidth > 0 &&
-                (window.outerWidth - window.innerWidth > 200 ||
-                 window.outerHeight - window.innerHeight > 200)) {
-                _blocked = true;
-                document.documentElement.innerHTML =
-                    '<body style="margin:0;background:#05050A;color:#fff;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;direction:rtl;padding:20px">' +
-                    '<div><div style="font-size:4rem;margin-bottom:20px">🛡️</div>' +
-                    '<h2 style="color:#B026FF;margin-bottom:15px">الوصول مرفوض</h2>' +
-                    '<p style="color:#9CA3AF;line-height:1.8">يرجى إغلاق أدوات المطور وإعادة تحميل الصفحة.</p></div></body>';
-            }
-        }
-        setTimeout(function() { setInterval(_checkDevtools, 1000); }, 2000);
+        // تم إيقاف كشف أدوات المطور التلقائي (Docked) لأنه يسبب إغلاق الصفحة خطأً على الهواتف
+        // عند فتح لوحة المفاتيح أو تغير أبعاد الشاشة.
 
         // مسح الكونسول دورياً (لمنع التراكم)
         setInterval(function() { try { console.clear(); } catch(e) {} }, 2000);
