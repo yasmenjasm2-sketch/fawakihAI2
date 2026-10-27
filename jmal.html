@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>مركز الدعم الفني - FawakihAI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             --bg-grad-1: #05050A;
@@ -58,7 +59,6 @@
             overflow: hidden;
         }
 
-        /* هالات ضوئية متحركة في الخلفية */
         #app-container::before,
         #app-container::after {
             content: '';
@@ -106,7 +106,6 @@
             gap: 15px;
         }
 
-        /* إطار متوهج متحرك حول الصورة */
         .avatar-wrapper {
             position: relative;
             width: 52px;
@@ -139,6 +138,10 @@
             position: relative;
             z-index: 1;
             animation: avatarPulse 2.4s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
         }
         @keyframes avatarPulse {
             0%, 100% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.4); }
@@ -217,7 +220,6 @@
             border-radius: 5px;
         }
 
-        /* ظهور تدريجي مع حركة انزلاق */
         .message-row {
             display: flex;
             margin-bottom: 20px;
@@ -281,9 +283,33 @@
             box-shadow: 0 0 8px rgba(176, 38, 255, 0.4);
         }
 
+        .ai-avatar {
+            background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+
         .msg-text {
             font-size: 0.95rem;
             line-height: 1.5;
+        }
+
+        /* تنسيق Markdown داخل ردود الذكاء الاصطناعي */
+        .bubble-admin .msg-text p { margin-bottom: 8px; }
+        .bubble-admin .msg-text p:last-child { margin-bottom: 0; }
+        .bubble-admin .msg-text ul, 
+        .bubble-admin .msg-text ol { margin: 8px 0; padding-right: 20px; }
+        .bubble-admin .msg-text li { margin-bottom: 4px; }
+        .bubble-admin .msg-text strong { color: var(--text-highlight); }
+        .bubble-admin .msg-text code {
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-highlight);
         }
 
         .msg-time {
@@ -328,7 +354,7 @@
             transform: translateY(-2px);
         }
 
-        /* --- Typing Indicator (3 نقاط متحركة) --- */
+        /* --- Typing Indicator --- */
         .typing-indicator {
             display: inline-flex;
             align-items: center;
@@ -375,6 +401,95 @@
             50% { transform: translateY(-10px) rotate(6deg); }
         }
 
+        /* --- أزرار التقييم الشفافة (هل استفدت؟) --- */
+        .ai-feedback-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(176, 38, 255, 0.05);
+            border: 1px dashed rgba(176, 38, 255, 0.35);
+            border-radius: 18px;
+            margin: 0 20px 20px auto;
+            max-width: 88%;
+            justify-content: flex-end;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            direction: rtl;
+        }
+
+        .feedback-q {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .fb-btn {
+            background: rgba(176, 38, 255, 0.12);
+            border: 1px solid rgba(176, 38, 255, 0.4);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: inherit;
+            font-weight: 700;
+        }
+        .fb-btn:hover { transform: scale(1.08); }
+        .fb-btn:active { transform: scale(0.9); }
+        .fb-yes:hover {
+            background: rgba(52, 211, 153, 0.3);
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .fb-no:hover {
+            background: rgba(248, 113, 113, 0.3);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.6); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- رسالة نظام التحويل للدعم --- */
+        .system-transfer-row {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0 20px 0;
+            width: 100%;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .system-transfer-msg {
+            text-align: center;
+            padding: 16px 22px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(176, 38, 255, 0.08));
+            border: 1px solid rgba(52, 211, 153, 0.45);
+            border-radius: 22px;
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.15);
+        }
+        .sys-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        .sys-main {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .sys-sub {
+            color: var(--text-highlight);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
         /* --- Input Area --- */
         .input-area {
             background: var(--header-bg);
@@ -418,7 +533,6 @@
         }
         .attach-btn:active { transform: scale(0.95); }
 
-        /* معاينة الصورة المرفقة */
         .file-preview {
             display: none;
             align-items: center;
@@ -456,10 +570,6 @@
             transition: 0.2s;
         }
         .file-preview .remove-file:hover { background: rgba(248, 113, 113, 0.4); }
-        @keyframes popIn {
-            from { transform: scale(0.6); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
 
         .chat-box-row {
             display: flex;
@@ -523,8 +633,12 @@
         }
         .send-btn:hover svg { transform: rotate(45deg) translateX(2px); }
         .send-btn:active { transform: scale(0.9); }
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-        /* Toast */
         .toast {
             position: absolute;
             bottom: 90px;
@@ -557,11 +671,11 @@
     <div class="header">
         <div class="header-info">
             <div class="avatar-wrapper">
-                <img src="jmol.jpg" alt="Support" class="avatar">
+                <div class="avatar" id="header-avatar">🤖</div>
             </div>
             <div class="header-text">
-                <span class="header-title">مركز الدعم الفني</span>
-                <span class="header-status">
+                <span class="header-title" id="header-title">المساعد الذكي</span>
+                <span class="header-status" id="header-status">
                     <span class="status-dot"></span>
                     متصل الآن
                 </span>
@@ -599,7 +713,16 @@
 </div>
 
 <script>
-    /* ---------- إعدادات الكيبورد للموبايل ---------- */
+    /* ============================================
+       إعدادات Markdown للذكاء الاصطناعي
+       ============================================ */
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({ breaks: true, gfm: true });
+    }
+
+    /* ============================================
+       إعدادات الكيبورد للموبايل
+       ============================================ */
     const appContainer = document.getElementById('app-container');
     const visualViewport = window.visualViewport;
 
@@ -610,14 +733,74 @@
         });
     }
 
-    /* ---------- مفاتيح API مشفرة ---------- */
+    /* ============================================
+       🔑 إعدادات Telegram (كما هي تماماً)
+       ============================================ */
     const ENC_BOT_TOKEN = "ODYyMDE5ODA0NDpBQUVJbzhCc3JZanYtQy1Rc1lUVDFEbHp2WktkOU1fRDI4RQ==";
     const ENC_CHAT_ID = "ODY4MTMwNDE2Mw==";
 
     const BOT_TOKEN = atob(ENC_BOT_TOKEN);
     const CHAT_ID = atob(ENC_CHAT_ID);
 
-    /* ---------- حالة التطبيق ---------- */
+    /* ============================================
+       🧠 إعدادات الذكاء الاصطناعي (Groq) — منقول بالكامل من الملف الأول
+       ============================================ */
+    const GROQ_KEY = "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";
+    const GROQ_LIST_URL = "https://api.groq.com/openai/v1/models";
+    const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+    const FAWAKIH_SYSTEM_PROMPT = `
+أنت المساعد الذكي الرسمي لتطبيق "فواكه AI" (FawakihAI). تم صنعك وبرمجتك بواسطة مطوري تطبيق fawakihAI لتكون مساعدهم النموذجي. أنت خبير في كل ما يتعلق بالتطبيق، وتجيب فقط بناءً على المعلومات التالية. إذا سُئلت "من طورك" أو "من برمجك" أو "من صنعك"، أجب بوضوح: "صنعوني مطورين تطبيق fawakihAI كمساعد نموذج لهم."
+
+--- معلومات تطبيق fawakihAI ---
+
+**الاسم:** فواكه AI (FawakihAI)
+**المطور:** Hamza Elhumada (حسب الموقع الرسمي)
+**الوظيفة الرئيسية:** تطبيق احترافي متخصص في تحليل وتوقعات نتائج لعبة تخمين الفواكه عبر خوارزميات الذكاء الاصطناعي المباشرة. يعمل داخل غرف الدردشة الصوتية على منصة يلا لايف (Yalla Live).
+**محرك الذكاء الاصطناعي:** Gemini AI من Google.
+**دقة الخوارزمية:** 86.7% (حسب الموقع الرسمي).
+**حجم التطبيق:** 33 MB.
+**عدد التثبيتات:** +86 ألف.
+**التقييم:** 4.6 من 5.
+
+**التطبيقات المدعومة للتخمين:**
+1. يلا لايف (Yalla Live) — الأداة الأولى المدعومة.
+2. ماسا (Masa) — برنامج تخمين حصري.
+3. يويي (Yooy) — منظومة تخمين متكاملة.
+
+**السعر:** اشتراك مدفوع بقيمة 35 دولار أمريكي.
+**بوابات الدفع:** PayPal، والعملات الرقمية المشفرة (Cryptocurrencies).
+**طريقة التحميل:** مباشرة من الموقع الرسمي (yasmenjasm2-sketch.github.io/fawakihAI2) دون الحاجة لمتجر تطبيقات.
+
+**الميزات الرئيسية:**
+- ذكاء اصطناعي Gemini AI يحلل الأنماط ويقدم تخمينات دقيقة.
+- استجابة فورية في الوقت الفعلي داخل غرف يلا لايف.
+- دقة عالية في التخمين تزيد مع كل جلسة.
+- واجهة سهلة الاستخدام للمبتدئين.
+- دعم فني متكامل 24/7 (عربي وإنجليزي).
+- تحديثات مستمرة.
+- تكامل مباشر مع يلا لايف (التطبيق مستقل ولا يحتاج API رسمي من يلا لايف).
+
+**الخصوصية والسياسات:**
+- جميع حقوق الملكية الفكرية محفوظة للمطور.
+- يُحظر نسخ أو توزيع أو إعادة بيع التطبيق.
+- لا يتم جمع بيانات شخصية غير ضرورية.
+- بيانات الدفع مشفرة بالكامل.
+- لا تتم مشاركة البيانات مع أطراف ثالثة.
+- الاشتراك قابل للاسترداد في حالات الأعطال التقنية (يُرجى التواصل مع الدعم خلال 48 ساعة).
+
+**روابط رسمية:**
+- الموقع الرسمي: https://yasmenjasm2-sketch.github.io/fawakihAI2/
+- الموقع التفصيلي: https://yasmenjasm2-sketch.github.io/totoman/
+- نقطة نهاية API: api.fawakihai.com/v1
+- التوثيق: docs.fawakihai.com
+
+**ملاحظة هامة:** أنت مساعد مخصص فقط لتطبيق fawakihAI. لا تقدم معلومات عامة خارج نطاق التطبيق. إذا سُئلت عن أي شيء آخر، اعتذر بلطف ووضح أن تخصصك هو تطبيق fawakihAI فقط.
+`;
+
+    /* ============================================
+       حالة التطبيق
+       ============================================ */
     let myUserId = localStorage.getItem("my_user_id");
     let deviceId = localStorage.getItem("device_id");
     let ticketsList = JSON.parse(localStorage.getItem("secure_tickets_data_web") || "[]");
@@ -629,9 +812,20 @@
     let lastUpdateId = parseInt(localStorage.getItem("last_update_id") || "0");
     let pollInterval;
 
-    // مفاتيح الرسائل التي تم عرضها سابقًا (لمنع تكرار الأنيميشن)
     let seenMessageKeys = new Set();
 
+    /* وضع المحادثة: 'ai' أو 'support' */
+    let currentMode = localStorage.getItem("chat_mode") || "ai";
+
+    /* حالة الذكاء الاصطناعي */
+    let aiModels = [];
+    let currentAIModel = null;
+    let aiReady = false;
+    let aiConversationHistory = [];
+
+    /* ============================================
+       Init
+       ============================================ */
     function init() {
         if (!myUserId) {
             myUserId = "ID-" + (10000 + Math.floor(Math.random() * 90000));
@@ -642,8 +836,10 @@
             localStorage.setItem("device_id", deviceId);
         }
 
+        updateHeaderMode();
         renderTickets();
         startPolling();
+        initializeAI();
 
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
@@ -652,6 +848,28 @@
         });
     }
 
+    /* ============================================
+       تحديث الهيدر حسب الوضع
+       ============================================ */
+    function updateHeaderMode() {
+        const title = document.getElementById("header-title");
+        const avatar = document.getElementById("header-avatar");
+        const status = document.getElementById("header-status");
+
+        if (currentMode === "ai") {
+            title.textContent = "المساعد الذكي";
+            avatar.textContent = "🤖";
+            status.innerHTML = `<span class="status-dot"></span> نشط - ذكاء اصطناعي`;
+        } else {
+            title.textContent = "مركز الدعم الفني";
+            avatar.textContent = "💬";
+            status.innerHTML = `<span class="status-dot"></span> متصل - دعم فني`;
+        }
+    }
+
+    /* ============================================
+       أدوات مساعدة
+       ============================================ */
     function showToast(msg) {
         const toast = document.getElementById("toast");
         toast.innerText = msg;
@@ -669,159 +887,97 @@
         setTimeout(() => container.scrollTop = container.scrollHeight, 80);
     }
 
-    /* ---------- بناء واجهة الرسائل ---------- */
-    function renderTickets() {
-        const container = document.getElementById("chat-container");
-        container.innerHTML = "";
-
-        // شاشة الترحيب
-        if (ticketsList.length === 0 && !isAdminTyping) {
-            container.innerHTML = `
-                <div class="welcome-msg">
-                    <span class="welcome-icon">💬</span>
-                    أهلاً بك في مركز الدعم الفني<br>
-                    نحن متصلون الآن، كيف يمكننا مساعدتك؟
-                </div>
-            `;
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        ticketsList.forEach((t, idx) => {
-            /* رسالة المستخدم */
-            if (t.userMessage || t.imageUri) {
-                const key = `u-${idx}-${(t.userMessage || '').substring(0, 30)}-${t.timestamp || ''}`;
-                const isNew = !seenMessageKeys.has(key);
-                seenMessageKeys.add(key);
-
-                const row = document.createElement("div");
-                row.className = "message-row msg-user" + (isNew ? "" : " visible");
-
-                const imgHtml = t.imageUri ? `<img src="${t.imageUri}" class="msg-image" alt="مرفق">` : "";
-                const textHtml = t.userMessage ? `<span class="msg-text">${escapeHtml(t.userMessage)}</span>` : "";
-
-                row.innerHTML = `
-                    <div class="bubble bubble-user">
-                        ${imgHtml}
-                        ${textHtml}
-                        <span class="msg-time">${t.timestamp || "الآن"}</span>
-                    </div>
-                `;
-                fragment.appendChild(row);
-            }
-
-            /* رد الدعم */
-            if (t.isReplied && t.adminReply) {
-                const key = `a-${idx}-${t.adminReply.substring(0, 30)}-${t.replyTimestamp || ''}`;
-                const isNew = !seenMessageKeys.has(key);
-                seenMessageKeys.add(key);
-
-                const row = document.createElement("div");
-                row.className = "message-row msg-admin" + (isNew ? "" : " visible");
-
-                let linksHtml = "";
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                const urls = t.adminReply.match(urlRegex);
-                if (urls) {
-                    urls.forEach(url => {
-                        linksHtml += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="link-btn">🔗 فتح الرابط المرفق</a>`;
-                    });
-                }
-
-                row.innerHTML = `
-                    <img src="jmol.jpg" class="admin-avatar-small" alt="Admin">
-                    <div class="bubble bubble-admin">
-                        <span class="admin-name">فريق الدعم</span>
-                        <span class="msg-text">${escapeHtml(t.adminReply)}</span>
-                        ${linksHtml}
-                        <span class="msg-time">${t.replyTimestamp || t.timestamp || "الآن"}</span>
-                    </div>
-                `;
-                fragment.appendChild(row);
-            }
-        });
-
-        /* مؤشر الكتابة */
-        if (isAdminTyping) {
-            const row = document.createElement("div");
-            row.className = "message-row msg-admin visible";
-            row.innerHTML = `
-                <img src="jmol.jpg" class="admin-avatar-small" alt="Admin">
-                <div class="bubble bubble-admin">
-                    <span class="typing-indicator">
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                    </span>
-                </div>
-            `;
-            fragment.appendChild(row);
-        }
-
-        container.appendChild(fragment);
-
-        // إجبار المتصفح على إعادة الحساب ثم تحريك الرسائل الجديدة فقط
-        void container.offsetHeight;
-        container.querySelectorAll(".message-row:not(.visible)").forEach((el, i) => {
-            el.style.transitionDelay = (i * 0.05) + "s";
-            el.classList.add("visible");
-            setTimeout(() => el.style.transitionDelay = "", 600);
-        });
-
-        scrollToBottom();
-    }
-
     function escapeHtml(text) {
         const div = document.createElement("div");
         div.textContent = text;
         return div.innerHTML;
     }
 
-    /* ---------- رفع الصور ---------- */
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (file) {
-            selectedImageFile = file;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedImageBase64 = e.target.result;
-                const preview = document.getElementById("file-preview");
-                const previewImg = document.getElementById("file-preview-img");
-                previewImg.src = e.target.result;
-                preview.classList.add("active");
-            };
-            reader.readAsDataURL(file);
+    /* ============================================
+       🧠 تهيئة الذكاء الاصطناعي (منقولة من الملف الأول)
+       ============================================ */
+    async function initializeAI() {
+        try {
+            const response = await fetch(GROQ_LIST_URL, {
+                headers: { "Authorization": `Bearer ${GROQ_KEY}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                aiModels = (data?.data || [])
+                    .filter(m => !m.id.includes("whisper") && !m.id.includes("tts") && !m.id.includes("guard"))
+                    .map(m => m.id)
+                    .sort((a, b) => {
+                        if (a.includes("llama-3.3-70b")) return -1;
+                        if (a.includes("qwen")) return -1;
+                        return 1;
+                    });
+
+                if (aiModels.length > 0) {
+                    currentAIModel = aiModels[0];
+                    aiReady = true;
+                    console.log("✅ AI Ready with:", currentAIModel);
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error("AI init failed:", e);
         }
+        return false;
     }
 
-    function removeFile() {
-        selectedImageFile = null;
-        selectedImageBase64 = null;
-        document.getElementById("file-preview").classList.remove("active");
-        document.getElementById("file-input").value = "";
-    }
-
-    /* ---------- مسح المحادثة ---------- */
-    function clearChat() {
-        if (confirm("هل أنت متأكد من مسح جميع رسائل المحادثة؟")) {
-            ticketsList = [];
-            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
-            seenMessageKeys.clear();
-            isAdminTyping = false;
-            renderTickets();
-            showToast("تم مسح المحادثة بنجاح ✓");
+    /* ============================================
+       🤖 استدعاء الذكاء الاصطناعي (نفس منطق الملف الأول)
+       ============================================ */
+    async function callAI(userMessage) {
+        if (!aiReady) {
+            const ok = await initializeAI();
+            if (!ok) throw new Error("AI not ready");
         }
-    }
 
-    function handleEnter(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
+        aiConversationHistory.push({ role: "user", content: userMessage });
+
+        const messages = [
+            { role: "system", content: FAWAKIH_SYSTEM_PROMPT },
+            ...aiConversationHistory
+        ];
+
+        const attempts = [currentAIModel, ...aiModels.filter(m => m !== currentAIModel)];
+
+        for (let model of attempts) {
+            try {
+                console.log(`جارٍ الطلب من: ${model}`);
+                const response = await fetch(GROQ_CHAT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${GROQ_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 2000
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentAIModel = model;
+                    const reply = data.choices[0].message.content;
+                    aiConversationHistory.push({ role: "assistant", content: reply });
+                    return reply;
+                }
+            } catch (err) {
+                console.warn(`فشل النموذج ${model}:`, err.message);
+            }
         }
+        throw new Error("فشلت جميع محاولات النماذج");
     }
 
-    /* ---------- إرسال الرسائل ---------- */
+    /* ============================================
+       📤 إرسال رسالة (Router حسب الوضع)
+       ============================================ */
     async function sendMessage() {
         const inputEl = document.getElementById("message-input");
         const msg = inputEl.value.trim();
@@ -832,6 +988,72 @@
         }
 
         inputEl.blur();
+
+        if (currentMode === "ai") {
+            await handleAIMessage(msg, inputEl);
+        } else {
+            await handleSupportMessage(msg, inputEl);
+        }
+    }
+
+    /* ============================================
+       🤖 معالجة رسالة في وضع AI
+       ============================================ */
+    async function handleAIMessage(msg, inputEl) {
+        if (selectedImageFile) {
+            showToast("إرفاق الصور غير متاح في وضع المساعد الذكي");
+            return;
+        }
+        if (!msg) return;
+
+        const ticket = {
+            ticketId: myUserId,
+            type: "ai",
+            isAI: true,
+            userMessage: msg,
+            adminReply: "",
+            isReplied: false,
+            imageUri: "",
+            timestamp: getCurrentTime(),
+            replyTimestamp: ""
+        };
+        ticketsList.push(ticket);
+        renderTickets();
+
+        inputEl.value = "";
+
+        isAdminTyping = true;
+        renderTickets();
+
+        try {
+            const reply = await callAI(msg);
+            isAdminTyping = false;
+
+            ticket.adminReply = reply;
+            ticket.isReplied = true;
+            ticket.replyTimestamp = getCurrentTime();
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            renderTickets();
+
+            /* إرسال سجل المحادثة إلى Telegram */
+            logAIToTelegram(msg, reply);
+        } catch (e) {
+            isAdminTyping = false;
+            ticket.adminReply = "عذراً، حدث خطأ مؤقت أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.";
+            ticket.isReplied = true;
+            ticket.replyTimestamp = getCurrentTime();
+            renderTickets();
+        }
+    }
+
+    /* ============================================
+       💬 معالجة رسالة في وضع الدعم الفني (نفس الكود الأصلي)
+       ============================================ */
+    async function handleSupportMessage(msg, inputEl) {
+        if (!msg && !selectedImageFile) {
+            showToast("يرجى كتابة رسالة أو إرفاق صورة أولاً");
+            return;
+        }
 
         const caption = `رسالة دعم فني
 
@@ -844,6 +1066,7 @@ ${msg || "(صورة مرفقة)"}
 
         const ticket = {
             ticketId: myUserId,
+            type: "support",
             userMessage: msg,
             adminReply: "",
             isReplied: false,
@@ -880,6 +1103,316 @@ ${msg || "(صورة مرفقة)"}
         }
     }
 
+    /* ============================================
+       ✅❌ معالجة تقييم "هل استفدت؟"
+       ============================================ */
+    window.handleAIFeedback = function(benefited) {
+        if (benefited) {
+            showToast("سعيد بخدمتك 🌸");
+            /* إخفاء الأزرار (إعادة رسم بدونها) */
+            window._hideFeedback = true;
+            renderTickets();
+            setTimeout(() => { window._hideFeedback = false; }, 100);
+        } else {
+            switchToSupportMode();
+        }
+    };
+
+    /* ============================================
+       🔄 التحويل إلى وضع الدعم الفني
+       ============================================ */
+    function switchToSupportMode() {
+        currentMode = "support";
+        localStorage.setItem("chat_mode", "support");
+
+        /* إضافة رسالة نظام التحويل */
+        ticketsList.push({
+            ticketId: myUserId,
+            type: "system",
+            isSystem: true,
+            userMessage: "",
+            adminReply: "تم إيقاف الذكاء الاصطناعي ونقلك إلى الدعم الفني",
+            subText: "تفضل، ما هو سؤالك؟",
+            isReplied: true,
+            imageUri: "",
+            timestamp: getCurrentTime(),
+            replyTimestamp: getCurrentTime()
+        });
+
+        localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+
+        updateHeaderMode();
+        renderTickets();
+        scrollToBottom();
+
+        /* إرسال إشعار التحويل إلى Telegram */
+        notifySupportTransfer();
+    }
+
+    /* ============================================
+       📨 إشعار التحويل إلى Telegram
+       ============================================ */
+    async function notifySupportTransfer() {
+        const text = `🔔 إشعار تحويل للدعم
+━━━━━━━━━━━━━━━
+🆔 رقم المستخدم: ${myUserId}
+⏰ الوقت: ${getCurrentTime()}
+
+المستخدم طلب التحويل للدعم الفني بعد استخدام المساعد الذكي.
+بانتظار استفساره في الرسالة القادمة.`;
+
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `chat_id=${CHAT_ID}&parse_mode=Markdown&text=${encodeURIComponent(text)}`
+            });
+        } catch (e) {
+            console.warn("Transfer notify failed:", e);
+        }
+    }
+
+    /* ============================================
+       📝 سجل محادثات AI إلى Telegram
+       ============================================ */
+    async function logAIToTelegram(question, reply) {
+        const text = `🤖 سجل محادثة ذكاء اصطناعي
+━━━━━━━━━━━━━━━
+🆔 رقم المستخدم: ${myUserId}
+⏰ الوقت: ${getCurrentTime()}
+
+📩 سؤال المستخدم:
+${question.substring(0, 1200)}
+
+💬 رد المساعد:
+${reply.substring(0, 1800)}`;
+
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `chat_id=${CHAT_ID}&parse_mode=Markdown&text=${encodeURIComponent(text)}`
+            });
+        } catch (e) {
+            console.warn("AI log failed:", e);
+        }
+    }
+
+    /* ============================================
+       🎨 رسم الرسائل
+       ============================================ */
+    function renderTickets() {
+        const container = document.getElementById("chat-container");
+        container.innerHTML = "";
+
+        /* شاشة الترحيب */
+        if (ticketsList.length === 0 && !isAdminTyping) {
+            container.innerHTML = `
+                <div class="welcome-msg">
+                    <span class="welcome-icon">💬</span>
+                    أهلاً بك في مركز الدعم الفني<br>
+                    نحن متصلون الآن، كيف يمكننا مساعدتك؟
+                </div>
+            `;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        ticketsList.forEach((t, idx) => {
+            /* رسالة نظام التحويل */
+            if (t.isSystem) {
+                const row = document.createElement("div");
+                row.className = "system-transfer-row";
+                row.innerHTML = `
+                    <div class="system-transfer-msg">
+                        <span class="sys-icon">✨</span>
+                        <span class="sys-main">${escapeHtml(t.adminReply)}</span>
+                        <span class="sys-sub">${escapeHtml(t.subText || "")}</span>
+                    </div>
+                `;
+                fragment.appendChild(row);
+                return;
+            }
+
+            /* رسالة المستخدم */
+            if (t.userMessage || t.imageUri) {
+                const key = `u-${idx}-${(t.userMessage || '').substring(0, 30)}-${t.timestamp || ''}`;
+                const isNew = !seenMessageKeys.has(key);
+                seenMessageKeys.add(key);
+
+                const row = document.createElement("div");
+                row.className = "message-row msg-user" + (isNew ? "" : " visible");
+
+                const imgHtml = t.imageUri ? `<img src="${t.imageUri}" class="msg-image" alt="مرفق">` : "";
+                const textHtml = t.userMessage ? `<span class="msg-text">${escapeHtml(t.userMessage)}</span>` : "";
+
+                row.innerHTML = `
+                    <div class="bubble bubble-user">
+                        ${imgHtml}
+                        ${textHtml}
+                        <span class="msg-time">${t.timestamp || "الآن"}</span>
+                    </div>
+                `;
+                fragment.appendChild(row);
+            }
+
+            /* رد المساعد / الدعم */
+            if (t.isReplied && t.adminReply) {
+                const key = `a-${idx}-${t.adminReply.substring(0, 30)}-${t.replyTimestamp || ''}`;
+                const isNew = !seenMessageKeys.has(key);
+                seenMessageKeys.add(key);
+
+                const row = document.createElement("div");
+                row.className = "message-row msg-admin" + (isNew ? "" : " visible");
+
+                /* اسم وأفاتار حسب النوع */
+                const nameLabel = t.isAI ? 'المساعد الذكي' : 'فريق الدعم';
+                const avatarHtml = t.isAI
+                    ? `<div class="admin-avatar-small ai-avatar">🤖</div>`
+                    : `<img src="jmol.jpg" class="admin-avatar-small" alt="Admin" onerror="this.style.display='none'">`;
+
+                /* روابط إن وُجدت في الرد (للدعم فقط) */
+                let linksHtml = "";
+                if (!t.isAI) {
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    const urls = t.adminReply.match(urlRegex);
+                    if (urls) {
+                        urls.forEach(url => {
+                            linksHtml += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="link-btn">🔗 فتح الرابط المرفق</a>`;
+                        });
+                    }
+                }
+
+                /* محتوى الرد: Markdown للذكاء الاصطناعي، نص عادي للدعم */
+                let replyContent;
+                if (t.isAI && typeof marked !== 'undefined') {
+                    try {
+                        replyContent = marked.parse(t.adminReply);
+                    } catch(e) {
+                        replyContent = escapeHtml(t.adminReply).replace(/\n/g, '<br>');
+                    }
+                } else {
+                    replyContent = escapeHtml(t.adminReply);
+                }
+
+                row.innerHTML = `
+                    ${avatarHtml}
+                    <div class="bubble bubble-admin">
+                        <span class="admin-name">${nameLabel}</span>
+                        <div class="msg-text">${replyContent}</div>
+                        ${linksHtml}
+                        <span class="msg-time">${t.replyTimestamp || t.timestamp || "الآن"}</span>
+                    </div>
+                `;
+                fragment.appendChild(row);
+            }
+        });
+
+        /* مؤشر الكتابة */
+        if (isAdminTyping) {
+            const row = document.createElement("div");
+            row.className = "message-row msg-admin visible";
+            const avatarHtml = currentMode === "ai"
+                ? `<div class="admin-avatar-small ai-avatar">🤖</div>`
+                : `<img src="jmol.jpg" class="admin-avatar-small" alt="Admin" onerror="this.style.display='none'">`;
+            row.innerHTML = `
+                ${avatarHtml}
+                <div class="bubble bubble-admin">
+                    <span class="typing-indicator">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </span>
+                </div>
+            `;
+            fragment.appendChild(row);
+        }
+
+        container.appendChild(fragment);
+
+        /* إظهار أزرار التقييم "هل استفدت؟" تحت آخر رد AI فقط */
+        if (currentMode === "ai" && !isAdminTyping && !window._hideFeedback) {
+            const lastTicket = [...ticketsList].reverse().find(t => !t.isSystem);
+            if (lastTicket && lastTicket.isAI && lastTicket.isReplied) {
+                const fbRow = document.createElement("div");
+                fbRow.className = "ai-feedback-row";
+                fbRow.innerHTML = `
+                    <span class="feedback-q">هل استفدت من الرد؟</span>
+                    <button class="fb-btn fb-yes" onclick="handleAIFeedback(true)">👍 نعم</button>
+                    <button class="fb-btn fb-no" onclick="handleAIFeedback(false)">👎 لا</button>
+                `;
+                container.appendChild(fbRow);
+            }
+        }
+
+        void container.offsetHeight;
+        container.querySelectorAll(".message-row:not(.visible)").forEach((el, i) => {
+            el.style.transitionDelay = (i * 0.05) + "s";
+            el.classList.add("visible");
+            setTimeout(() => el.style.transitionDelay = "", 600);
+        });
+
+        scrollToBottom();
+    }
+
+    /* ============================================
+       📎 إرفاق الصور
+       ============================================ */
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedImageFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedImageBase64 = e.target.result;
+                const preview = document.getElementById("file-preview");
+                const previewImg = document.getElementById("file-preview-img");
+                previewImg.src = e.target.result;
+                preview.classList.add("active");
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeFile() {
+        selectedImageFile = null;
+        selectedImageBase64 = null;
+        document.getElementById("file-preview").classList.remove("active");
+        document.getElementById("file-input").value = "";
+    }
+
+    /* ============================================
+       🧹 مسح المحادثة
+       ============================================ */
+    function clearChat() {
+        if (confirm("هل أنت متأكد من مسح جميع رسائل المحادثة؟")) {
+            ticketsList = [];
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            seenMessageKeys.clear();
+            isAdminTyping = false;
+
+            /* إعادة للوضع الافتراضي (AI) */
+            currentMode = "ai";
+            localStorage.setItem("chat_mode", "ai");
+            aiConversationHistory = [];
+
+            updateHeaderMode();
+            renderTickets();
+            showToast("تم مسح المحادثة بنجاح ✓");
+        }
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+
+    /* ============================================
+       📡 Telegram API - إرسال
+       ============================================ */
     async function sendTextApi(text) {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -906,7 +1439,9 @@ ${msg || "(صورة مرفقة)"}
         return res.ok;
     }
 
-    /* ---------- استقبال الردود ---------- */
+    /* ============================================
+       📡 Telegram Polling - استقبال الردود
+       ============================================ */
     function startPolling() {
         if (pollInterval) clearInterval(pollInterval);
 
@@ -932,7 +1467,13 @@ ${msg || "(صورة مرفقة)"}
 
                         if (update.message && update.message.text) {
                             let text = update.message.text;
-                            if (text.includes(myUserId) && !text.includes("رسالة دعم فني")) {
+                            /* تجاهل: رسائل الدعم الصادرة + سجلات AI + إشعارات التحويل */
+                            if (
+                                text.includes(myUserId) &&
+                                !text.includes("رسالة دعم فني") &&
+                                !text.includes("سجل محادثة ذكاء اصطناعي") &&
+                                !text.includes("إشعار تحويل للدعم")
+                            ) {
                                 let cleanReply = text.replace(myUserId, "").replace(/^[:\-]/, "").trim();
                                 if (cleanReply) processAdminReply(cleanReply);
                             }
@@ -944,6 +1485,12 @@ ${msg || "(صورة مرفقة)"}
     }
 
     function processAdminReply(reply) {
+        /* لا نعالج أي رد إذا لم تكن هناك تذكرة دعم معلّقة */
+        const hasPendingSupport = ticketsList.some(t =>
+            !t.isAI && !t.isSystem && !t.isReplied && t.ticketId === myUserId
+        );
+        if (!hasPendingSupport) return;
+
         isAdminTyping = true;
         renderTickets();
 
@@ -952,12 +1499,16 @@ ${msg || "(صورة مرفقة)"}
             const rcvTime = getCurrentTime();
             let attached = false;
 
-            // نرفق الرد بأول تذكرة غير مُجابة للمستخدم الحالي
             for (let i = 0; i < ticketsList.length; i++) {
-                if (!ticketsList[i].isReplied && ticketsList[i].ticketId === myUserId) {
+                if (
+                    !ticketsList[i].isReplied &&
+                    !ticketsList[i].isAI &&
+                    !ticketsList[i].isSystem &&
+                    ticketsList[i].ticketId === myUserId
+                ) {
                     ticketsList[i].adminReply = reply;
                     ticketsList[i].isReplied = true;
-                    ticketsList[i].replyTimestamp = rcvTime; // ← إصلاح: وقت منفصل للرد
+                    ticketsList[i].replyTimestamp = rcvTime;
                     attached = true;
                     break;
                 }
@@ -966,6 +1517,7 @@ ${msg || "(صورة مرفقة)"}
             if (!attached) {
                 ticketsList.push({
                     ticketId: myUserId,
+                    type: "support",
                     userMessage: "",
                     adminReply: reply,
                     isReplied: true,
