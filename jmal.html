@@ -138,10 +138,7 @@
             position: relative;
             z-index: 1;
             animation: avatarPulse 2.4s ease-in-out infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
+            display: block;
         }
         @keyframes avatarPulse {
             0%, 100% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.4); }
@@ -281,15 +278,7 @@
             object-fit: cover;
             margin-left: 8px;
             box-shadow: 0 0 8px rgba(176, 38, 255, 0.4);
-        }
-
-        .ai-avatar {
             background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: white;
         }
 
         .msg-text {
@@ -401,7 +390,7 @@
             50% { transform: translateY(-10px) rotate(6deg); }
         }
 
-        /* --- أزرار التقييم الشفافة (هل استفدت؟) --- */
+        /* --- أزرار التقييم الشفافة --- */
         .ai-feedback-row {
             display: flex;
             align-items: center;
@@ -454,7 +443,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* --- رسالة نظام التحويل للدعم --- */
+        /* --- رسالة نظام التحويل --- */
         .system-transfer-row {
             display: flex;
             justify-content: center;
@@ -671,7 +660,8 @@
     <div class="header">
         <div class="header-info">
             <div class="avatar-wrapper">
-                <div class="avatar" id="header-avatar">🤖</div>
+                <img src="jmol.jpg" alt="FawakihAI" class="avatar" id="header-avatar"
+                     onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('beforeend','<div class=\'avatar\' style=\'display:flex;align-items:center;justify-content:center;font-size:1.4rem\'>🤖</div>');">
             </div>
             <div class="header-text">
                 <span class="header-title" id="header-title">المساعد الذكي</span>
@@ -687,7 +677,7 @@
     <div class="chat-scroll" id="chat-container"></div>
 
     <div class="input-area">
-        <div class="top-input-row">
+        <div class="top-input-row" id="top-input-row">
             <div class="file-preview" id="file-preview">
                 <img id="file-preview-img" src="" alt="معاينة">
                 <span>صورة جاهزة للإرسال</span>
@@ -734,7 +724,7 @@
     }
 
     /* ============================================
-       🔑 إعدادات Telegram (كما هي تماماً)
+       🔑 إعدادات Telegram
        ============================================ */
     const ENC_BOT_TOKEN = "ODYyMDE5ODA0NDpBQUVJbzhCc3JZanYtQy1Rc1lUVDFEbHp2WktkOU1fRDI4RQ==";
     const ENC_CHAT_ID = "ODY4MTMwNDE2Mw==";
@@ -743,7 +733,13 @@
     const CHAT_ID = atob(ENC_CHAT_ID);
 
     /* ============================================
-       🧠 إعدادات الذكاء الاصطناعي (Groq) — منقول بالكامل من الملف الأول
+       🔥 إعدادات Firebase Realtime Database
+       ============================================ */
+    const FIREBASE_URL = "https://mehamzaalanat-default-rtdb.europe-west1.firebasedatabase.app";
+    const FIREBASE_KEY = "AIzaSyDr0kbQDE90hhEMohV6X1b4ndu4L7uZz24";
+
+    /* ============================================
+       🧠 إعدادات الذكاء الاصطناعي (Groq)
        ============================================ */
     const GROQ_KEY = "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";
     const GROQ_LIST_URL = "https://api.groq.com/openai/v1/models";
@@ -814,19 +810,100 @@
 
     let seenMessageKeys = new Set();
 
-    /* وضع المحادثة: 'ai' أو 'support' */
     let currentMode = localStorage.getItem("chat_mode") || "ai";
 
-    /* حالة الذكاء الاصطناعي */
     let aiModels = [];
     let currentAIModel = null;
     let aiReady = false;
     let aiConversationHistory = [];
 
+    /* منع الحفظ المتكرر */
+    let saveTimeout = null;
+
+    /* ============================================
+       🔥 Firebase: حفظ حالة المحادثة
+       ============================================ */
+    async function fbSaveChat() {
+        if (!deviceId) return;
+        try {
+            /* نزيل base64 من الصور لتجنب تجاوز حجم Firebase */
+            const firebaseTickets = ticketsList.map(t => {
+                const copy = { ...t };
+                if (copy.imageUri && copy.imageUri.length > 5000) {
+                    copy.imageUri = "";
+                }
+                return copy;
+            });
+
+            const state = {
+                deviceId: deviceId,
+                myUserId: myUserId,
+                ticketsList: firebaseTickets,
+                currentMode: currentMode,
+                lastUpdateId: lastUpdateId,
+                aiConversationHistory: aiConversationHistory.slice(-20),
+                lastActive: Date.now()
+            };
+
+            await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${FIREBASE_KEY}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(state)
+            });
+        } catch (e) {
+            console.warn("Firebase save failed:", e);
+        }
+    }
+
+    /* حفظ مؤجل (debounced) */
+    function scheduleSave() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => fbSaveChat(), 800);
+    }
+
+    /* ============================================
+       🔥 Firebase: تحميل حالة المحادثة
+       ============================================ */
+    async function fbLoadChat() {
+        if (!deviceId) return false;
+        try {
+            const res = await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${FIREBASE_KEY}`);
+            if (!res.ok) return false;
+            const data = await res.json();
+            if (!data) return false;
+
+            if (data.myUserId) myUserId = data.myUserId;
+            if (Array.isArray(data.ticketsList) && data.ticketsList.length > 0) {
+                /* دمج: نستخدم Firebase إن كان أطول من المحلي */
+                if (data.ticketsList.length > ticketsList.length) {
+                    ticketsList = data.ticketsList;
+                }
+            }
+            if (data.currentMode) currentMode = data.currentMode;
+            if (typeof data.lastUpdateId === "number" && data.lastUpdateId > lastUpdateId) {
+                lastUpdateId = data.lastUpdateId;
+            }
+            if (Array.isArray(data.aiConversationHistory) && data.aiConversationHistory.length > 0) {
+                aiConversationHistory = data.aiConversationHistory;
+            }
+
+            /* مزامنة مع localStorage */
+            localStorage.setItem("my_user_id", myUserId);
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            localStorage.setItem("chat_mode", currentMode);
+            localStorage.setItem("last_update_id", lastUpdateId);
+
+            return true;
+        } catch (e) {
+            console.warn("Firebase load failed:", e);
+            return false;
+        }
+    }
+
     /* ============================================
        Init
        ============================================ */
-    function init() {
+    async function init() {
         if (!myUserId) {
             myUserId = "ID-" + (10000 + Math.floor(Math.random() * 90000));
             localStorage.setItem("my_user_id", myUserId);
@@ -835,6 +912,9 @@
             deviceId = "WEB-" + Math.random().toString(36).substr(2, 9).toUpperCase();
             localStorage.setItem("device_id", deviceId);
         }
+
+        /* محاولة تحميل من Firebase */
+        await fbLoadChat();
 
         updateHeaderMode();
         renderTickets();
@@ -849,21 +929,33 @@
     }
 
     /* ============================================
-       تحديث الهيدر حسب الوضع
+       تحديث الهيدر حسب الوضع + إخفاء زر المرفقات في AI
        ============================================ */
     function updateHeaderMode() {
         const title = document.getElementById("header-title");
-        const avatar = document.getElementById("header-avatar");
         const status = document.getElementById("header-status");
+        const topRow = document.getElementById("top-input-row");
 
         if (currentMode === "ai") {
             title.textContent = "المساعد الذكي";
-            avatar.textContent = "🤖";
             status.innerHTML = `<span class="status-dot"></span> نشط - ذكاء اصطناعي`;
+
+            /* إخفاء زر المرفقات في وضع AI */
+            if (topRow) topRow.style.display = "none";
+
+            /* تنظيف أي صورة معلّقة */
+            selectedImageFile = null;
+            selectedImageBase64 = null;
+            const fp = document.getElementById("file-preview");
+            if (fp) fp.classList.remove("active");
+            const fi = document.getElementById("file-input");
+            if (fi) fi.value = "";
         } else {
             title.textContent = "مركز الدعم الفني";
-            avatar.textContent = "💬";
             status.innerHTML = `<span class="status-dot"></span> متصل - دعم فني`;
+
+            /* إظهار زر المرفقات في وضع الدعم */
+            if (topRow) topRow.style.display = "flex";
         }
     }
 
@@ -894,7 +986,7 @@
     }
 
     /* ============================================
-       🧠 تهيئة الذكاء الاصطناعي (منقولة من الملف الأول)
+       🧠 تهيئة الذكاء الاصطناعي
        ============================================ */
     async function initializeAI() {
         try {
@@ -927,7 +1019,7 @@
     }
 
     /* ============================================
-       🤖 استدعاء الذكاء الاصطناعي (نفس منطق الملف الأول)
+       🤖 استدعاء الذكاء الاصطناعي
        ============================================ */
     async function callAI(userMessage) {
         if (!aiReady) {
@@ -966,6 +1058,10 @@
                     currentAIModel = model;
                     const reply = data.choices[0].message.content;
                     aiConversationHistory.push({ role: "assistant", content: reply });
+                    /* الحفاظ على حجم التاريخ */
+                    if (aiConversationHistory.length > 20) {
+                        aiConversationHistory = aiConversationHistory.slice(-20);
+                    }
                     return reply;
                 }
             } catch (err) {
@@ -1000,10 +1096,6 @@
        🤖 معالجة رسالة في وضع AI
        ============================================ */
     async function handleAIMessage(msg, inputEl) {
-        if (selectedImageFile) {
-            showToast("إرفاق الصور غير متاح في وضع المساعد الذكي");
-            return;
-        }
         if (!msg) return;
 
         const ticket = {
@@ -1019,6 +1111,7 @@
         };
         ticketsList.push(ticket);
         renderTickets();
+        scheduleSave();
 
         inputEl.value = "";
 
@@ -1034,8 +1127,8 @@
             ticket.replyTimestamp = getCurrentTime();
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             renderTickets();
+            scheduleSave();
 
-            /* إرسال سجل المحادثة إلى Telegram */
             logAIToTelegram(msg, reply);
         } catch (e) {
             isAdminTyping = false;
@@ -1043,11 +1136,12 @@
             ticket.isReplied = true;
             ticket.replyTimestamp = getCurrentTime();
             renderTickets();
+            scheduleSave();
         }
     }
 
     /* ============================================
-       💬 معالجة رسالة في وضع الدعم الفني (نفس الكود الأصلي)
+       💬 معالجة رسالة في وضع الدعم الفني
        ============================================ */
     async function handleSupportMessage(msg, inputEl) {
         if (!msg && !selectedImageFile) {
@@ -1076,6 +1170,7 @@ ${msg || "(صورة مرفقة)"}
         };
         ticketsList.push(ticket);
         renderTickets();
+        scheduleSave();
 
         inputEl.value = "";
         selectedImageFile = null;
@@ -1100,6 +1195,7 @@ ${msg || "(صورة مرفقة)"}
             showToast("عذراً، فشل الإرسال، حاول مجدداً");
             ticketsList.pop();
             renderTickets();
+            scheduleSave();
         }
     }
 
@@ -1109,7 +1205,6 @@ ${msg || "(صورة مرفقة)"}
     window.handleAIFeedback = function(benefited) {
         if (benefited) {
             showToast("سعيد بخدمتك 🌸");
-            /* إخفاء الأزرار (إعادة رسم بدونها) */
             window._hideFeedback = true;
             renderTickets();
             setTimeout(() => { window._hideFeedback = false; }, 100);
@@ -1125,7 +1220,6 @@ ${msg || "(صورة مرفقة)"}
         currentMode = "support";
         localStorage.setItem("chat_mode", "support");
 
-        /* إضافة رسالة نظام التحويل */
         ticketsList.push({
             ticketId: myUserId,
             type: "system",
@@ -1144,8 +1238,8 @@ ${msg || "(صورة مرفقة)"}
         updateHeaderMode();
         renderTickets();
         scrollToBottom();
+        scheduleSave();
 
-        /* إرسال إشعار التحويل إلى Telegram */
         notifySupportTransfer();
     }
 
@@ -1156,6 +1250,7 @@ ${msg || "(صورة مرفقة)"}
         const text = `🔔 إشعار تحويل للدعم
 ━━━━━━━━━━━━━━━
 🆔 رقم المستخدم: ${myUserId}
+💻 الجهاز: ${deviceId}
 ⏰ الوقت: ${getCurrentTime()}
 
 المستخدم طلب التحويل للدعم الفني بعد استخدام المساعد الذكي.
@@ -1179,6 +1274,7 @@ ${msg || "(صورة مرفقة)"}
         const text = `🤖 سجل محادثة ذكاء اصطناعي
 ━━━━━━━━━━━━━━━
 🆔 رقم المستخدم: ${myUserId}
+💻 الجهاز: ${deviceId}
 ⏰ الوقت: ${getCurrentTime()}
 
 📩 سؤال المستخدم:
@@ -1205,13 +1301,15 @@ ${reply.substring(0, 1800)}`;
         const container = document.getElementById("chat-container");
         container.innerHTML = "";
 
-        /* شاشة الترحيب */
         if (ticketsList.length === 0 && !isAdminTyping) {
+            const greeting = currentMode === "ai"
+                ? "أهلاً بك في المساعد الذكي 🤖<br>كيف يمكنني مساعدتك اليوم؟"
+                : "أهلاً بك في مركز الدعم الفني<br>نحن متصلون الآن، كيف يمكننا مساعدتك؟";
+            const icon = currentMode === "ai" ? "🤖" : "💬";
             container.innerHTML = `
                 <div class="welcome-msg">
-                    <span class="welcome-icon">💬</span>
-                    أهلاً بك في مركز الدعم الفني<br>
-                    نحن متصلون الآن، كيف يمكننا مساعدتك؟
+                    <span class="welcome-icon">${icon}</span>
+                    ${greeting}
                 </div>
             `;
             return;
@@ -1257,7 +1355,7 @@ ${reply.substring(0, 1800)}`;
                 fragment.appendChild(row);
             }
 
-            /* رد المساعد / الدعم */
+            /* رد المساعد / الدعم - الآن يستخدم jmol.jpg للطرفين */
             if (t.isReplied && t.adminReply) {
                 const key = `a-${idx}-${t.adminReply.substring(0, 30)}-${t.replyTimestamp || ''}`;
                 const isNew = !seenMessageKeys.has(key);
@@ -1266,11 +1364,8 @@ ${reply.substring(0, 1800)}`;
                 const row = document.createElement("div");
                 row.className = "message-row msg-admin" + (isNew ? "" : " visible");
 
-                /* اسم وأفاتار حسب النوع */
                 const nameLabel = t.isAI ? 'المساعد الذكي' : 'فريق الدعم';
-                const avatarHtml = t.isAI
-                    ? `<div class="admin-avatar-small ai-avatar">🤖</div>`
-                    : `<img src="jmol.jpg" class="admin-avatar-small" alt="Admin" onerror="this.style.display='none'">`;
+                const avatarHtml = `<img src="jmol.jpg" class="admin-avatar-small" alt="${nameLabel}" onerror="this.outerHTML='<div class=\\'admin-avatar-small\\' style=\\'display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem\\'>${t.isAI ? '🤖' : '💬'}</div>'">`;
 
                 /* روابط إن وُجدت في الرد (للدعم فقط) */
                 let linksHtml = "";
@@ -1313,9 +1408,7 @@ ${reply.substring(0, 1800)}`;
         if (isAdminTyping) {
             const row = document.createElement("div");
             row.className = "message-row msg-admin visible";
-            const avatarHtml = currentMode === "ai"
-                ? `<div class="admin-avatar-small ai-avatar">🤖</div>`
-                : `<img src="jmol.jpg" class="admin-avatar-small" alt="Admin" onerror="this.style.display='none'">`;
+            const avatarHtml = `<img src="jmol.jpg" class="admin-avatar-small" alt="typing" onerror="this.outerHTML='<div class=\\'admin-avatar-small\\' style=\\'display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem\\'>${currentMode === 'ai' ? '🤖' : '💬'}</div>'">`;
             row.innerHTML = `
                 ${avatarHtml}
                 <div class="bubble bubble-admin">
@@ -1331,7 +1424,7 @@ ${reply.substring(0, 1800)}`;
 
         container.appendChild(fragment);
 
-        /* إظهار أزرار التقييم "هل استفدت؟" تحت آخر رد AI فقط */
+        /* أزرار التقييم "هل استفدت؟" تحت آخر رد AI */
         if (currentMode === "ai" && !isAdminTyping && !window._hideFeedback) {
             const lastTicket = [...ticketsList].reverse().find(t => !t.isSystem);
             if (lastTicket && lastTicket.isAI && lastTicket.isReplied) {
@@ -1392,13 +1485,13 @@ ${reply.substring(0, 1800)}`;
             seenMessageKeys.clear();
             isAdminTyping = false;
 
-            /* إعادة للوضع الافتراضي (AI) */
             currentMode = "ai";
             localStorage.setItem("chat_mode", "ai");
             aiConversationHistory = [];
 
             updateHeaderMode();
             renderTickets();
+            scheduleSave();
             showToast("تم مسح المحادثة بنجاح ✓");
         }
     }
@@ -1467,7 +1560,6 @@ ${reply.substring(0, 1800)}`;
 
                         if (update.message && update.message.text) {
                             let text = update.message.text;
-                            /* تجاهل: رسائل الدعم الصادرة + سجلات AI + إشعارات التحويل */
                             if (
                                 text.includes(myUserId) &&
                                 !text.includes("رسالة دعم فني") &&
@@ -1485,7 +1577,6 @@ ${reply.substring(0, 1800)}`;
     }
 
     function processAdminReply(reply) {
-        /* لا نعالج أي رد إذا لم تكن هناك تذكرة دعم معلّقة */
         const hasPendingSupport = ticketsList.some(t =>
             !t.isAI && !t.isSystem && !t.isReplied && t.ticketId === myUserId
         );
@@ -1529,6 +1620,7 @@ ${reply.substring(0, 1800)}`;
 
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             renderTickets();
+            scheduleSave();
 
             try {
                 if ('vibrate' in navigator) navigator.vibrate(200);
