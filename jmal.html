@@ -704,6 +704,62 @@
 
 <script>
     /* ============================================
+       🛡️ الحماية: منع أدوات المطور والفحص
+       ============================================ */
+    (function() {
+        'use strict';
+
+        // منع النقر بزر الماوس الأيمن (Inspect)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+
+        // منع اختصارات أدوات المطور
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            // Ctrl+Shift+I/J/C/K  (DevTools)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey &&
+                ['I','J','C','K','i','j','c','k'].indexOf(e.key) !== -1) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            // Ctrl+U / Ctrl+S  (View Source / Save)
+            if ((e.ctrlKey || e.metaKey) && ['u','U','s','S'].indexOf(e.key) !== -1) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, true);
+
+        // كشف أدوات المطور المفتوحة (Docked)
+        let _blocked = false;
+        function _checkDevtools() {
+            if (_blocked) return;
+            if (window.outerWidth > 0 && window.innerWidth > 0 &&
+                (window.outerWidth - window.innerWidth > 200 ||
+                 window.outerHeight - window.innerHeight > 200)) {
+                _blocked = true;
+                document.documentElement.innerHTML =
+                    '<body style="margin:0;background:#05050A;color:#fff;font-family:Cairo,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;direction:rtl;padding:20px">' +
+                    '<div><div style="font-size:4rem;margin-bottom:20px">🛡️</div>' +
+                    '<h2 style="color:#B026FF;margin-bottom:15px">الوصول مرفوض</h2>' +
+                    '<p style="color:#9CA3AF;line-height:1.8">يرجى إغلاق أدوات المطور وإعادة تحميل الصفحة.</p></div></body>';
+            }
+        }
+        setTimeout(function() { setInterval(_checkDevtools, 1000); }, 2000);
+
+        // مسح الكونسول دورياً (لمنع التراكم)
+        setInterval(function() { try { console.clear(); } catch(e) {} }, 2000);
+    })();
+
+    /* ============================================
        إعدادات Markdown للذكاء الاصطناعي
        ============================================ */
     if (typeof marked !== 'undefined') {
@@ -734,16 +790,39 @@
 
     /* ============================================
        🔥 إعدادات Firebase Realtime Database
+       (المفتاح مشفر بـ XOR 51 - نفس تقنية GROQ)
        ============================================ */
     const FIREBASE_URL = "https://mehamzaalanat-default-rtdb.europe-west1.firebasedatabase.app";
-    const FIREBASE_KEY = "AIzaSyDr0kbQDE90hhEMohV6X1b4ndu4L7uZz24";
+
+    // مفتاح Firebase مشفر (XOR 51) - مقسم إلى 3 أجزاء
+    const _fa = [114,122,73,82,96,74,119,65,3,88,81,98,119];
+    const _fb = [118,10,3,91,91,118,126,92,91,101,5,107,2];
+    const _fc = [81,7,93,87,70,7,127,4,70,105,73,1,7];
+    function _gfk() {
+        const _all = [..._fa, ..._fb, ..._fc];
+        const _s = _all.map(b => String.fromCharCode(b ^ 51)).join('');
+        for (let i = 0; i < _all.length; i++) _all[i] = 0;
+        return _s;
+    }
 
     /* ============================================
        🧠 إعدادات الذكاء الاصطناعي (Groq)
+       (المفتاح مشفر بـ XOR 51 - مقسم إلى 4 أجزاء)
        ============================================ */
-    const GROQ_KEY = "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";
     const GROQ_LIST_URL = "https://api.groq.com/openai/v1/models";
     const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+    // مفتاح Groq مشفر (XOR 51) - مقسم إلى 4 أجزاء
+    const _ka = [84,64,88,108,95,67,70,1,68,102,70,67,123,69];
+    const _kb = [7,64,97,120,67,11,118,114,122,0,100,116,87,74];
+    const _kc = [81,0,117,106,4,67,92,105,70,100,80,120,67,105];
+    const _kd = [64,105,98,114,84,65,67,84,81,100,92,116,73,85];
+    function _gk() {
+        const _all = [..._ka, ..._kb, ..._kc, ..._kd];
+        const _s = _all.map(b => String.fromCharCode(b ^ 51)).join('');
+        for (let i = 0; i < _all.length; i++) _all[i] = 0;
+        return _s;
+    }
 
     const FAWAKIH_SYSTEM_PROMPT = `
 أنت المساعد الذكي الرسمي لتطبيق "فواكه AI" (FawakihAI). تم صنعك وبرمجتك بواسطة مطوري تطبيق fawakihAI لتكون مساعدهم النموذجي. أنت خبير في كل ما يتعلق بالتطبيق، وتجيب فقط بناءً على المعلومات التالية. إذا سُئلت "من طورك" أو "من برمجك" أو "من صنعك"، أجب بوضوح: "صنعوني مطورين تطبيق fawakihAI كمساعد نموذج لهم."
@@ -790,6 +869,20 @@
 - الموقع التفصيلي: https://yasmenjasm2-sketch.github.io/totoman/
 - نقطة نهاية API: api.fawakihai.com/v1
 - التوثيق: docs.fawakihai.com
+
+--- معلومات الدفع والاشتراك (سرية - تُذكر فقط عند السؤال المباشر) ---
+
+⚠️ تعليمات صارمة للغاية:
+- **لا تذكر رقم الواتساب أو معلومات التفعيل إطلاقاً** إلا إذا سألك المستخدم **صراحةً** عن:
+  1. سعر الاشتراك (مثل: "بكم الاشتراك؟"، "كم سعر التفعيل؟"، "كيف أشترك؟")
+  2. طرق الدفع (مثل: "كيف أدفع؟"، "ما هي طرق الدفع المتاحة؟"، "طرق الدفع؟")
+
+- **إذا سأل المستخدم عن السعر أو طرق الدفع فقط**، ردّ بهذه الصيغة الحرفية (بدون زيادة أو نقصان):
+
+"متوفر طرق دفع جميع دول التفعيل من خلال واتساب +905424678123"
+
+- لا تضف أي معلومة أخرى عن السعر أو الدفع في ردك (لا تذكر PayPal ولا العملات الرقمية ولا المبلغ بالتفصيل) إلا إذا سأل عن تفاصيل إضافية بعد ذلك.
+- **إذا لم يسأل** المستخدم عن السعر أو طرق الدفع، **لا تذكر الواتساب أو التفعيل مطلقاً** في أي رد، حتى لو تحدثت عن ميزات التطبيق أو التحميل.
 
 **ملاحظة هامة:** أنت مساعد مخصص فقط لتطبيق fawakihAI. لا تقدم معلومات عامة خارج نطاق التطبيق. إذا سُئلت عن أي شيء آخر، اعتذر بلطف ووضح أن تخصصك هو تطبيق fawakihAI فقط.
 `;
@@ -845,7 +938,8 @@
                 lastActive: Date.now()
             };
 
-            await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${FIREBASE_KEY}`, {
+            const _fk = _gfk();
+            await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${_fk}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(state)
@@ -867,7 +961,8 @@
     async function fbLoadChat() {
         if (!deviceId) return false;
         try {
-            const res = await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${FIREBASE_KEY}`);
+            const _fk = _gfk();
+            const res = await fetch(`${FIREBASE_URL}/chats/${deviceId}.json?auth=${_fk}`);
             if (!res.ok) return false;
             const data = await res.json();
             if (!data) return false;
@@ -989,9 +1084,10 @@
        🧠 تهيئة الذكاء الاصطناعي
        ============================================ */
     async function initializeAI() {
+        const _key = _gk();
         try {
             const response = await fetch(GROQ_LIST_URL, {
-                headers: { "Authorization": `Bearer ${GROQ_KEY}` }
+                headers: { "Authorization": `Bearer ${_key}` }
             });
 
             if (response.ok) {
@@ -1034,6 +1130,7 @@
             ...aiConversationHistory
         ];
 
+        const _key = _gk();
         const attempts = [currentAIModel, ...aiModels.filter(m => m !== currentAIModel)];
 
         for (let model of attempts) {
@@ -1043,7 +1140,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${GROQ_KEY}`
+                        "Authorization": `Bearer ${_key}`
                     },
                     body: JSON.stringify({
                         model: model,
@@ -1355,7 +1452,7 @@ ${reply.substring(0, 1800)}`;
                 fragment.appendChild(row);
             }
 
-            /* رد المساعد / الدعم - الآن يستخدم jmol.jpg للطرفين */
+            /* رد المساعد / الدعم */
             if (t.isReplied && t.adminReply) {
                 const key = `a-${idx}-${t.adminReply.substring(0, 30)}-${t.replyTimestamp || ''}`;
                 const isNew = !seenMessageKeys.has(key);
