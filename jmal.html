@@ -174,6 +174,10 @@
             box-shadow: 0 0 8px var(--success);
             animation: statusPulse 1.5s ease-in-out infinite;
         }
+        .status-dot.offline {
+            background: var(--danger);
+            box-shadow: 0 0 8px var(--danger);
+        }
         @keyframes statusPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(1.35); }
@@ -269,6 +273,20 @@
             50% { border-color: rgba(176, 38, 255, 0.5); }
         }
 
+        /* 🔹 تمييز بابل الدعم بلون مختلف */
+        .bubble-admin.support-mode {
+            background: linear-gradient(135deg, #0d1a2e, #0a1420);
+            border-color: rgba(52, 211, 153, 0.35);
+            animation: supportGlow 3s ease-in-out infinite;
+        }
+        @keyframes supportGlow {
+            0%, 100% { border-color: rgba(52, 211, 153, 0.25); box-shadow: 0 0 0 rgba(52, 211, 153, 0); }
+            50% { border-color: rgba(52, 211, 153, 0.5); box-shadow: 0 0 12px rgba(52, 211, 153, 0.15); }
+        }
+        .bubble-admin.support-mode .admin-name {
+            color: var(--success);
+        }
+
         .admin-avatar-small {
             width: 35px;
             height: 35px;
@@ -279,6 +297,10 @@
             margin-left: 8px;
             box-shadow: 0 0 8px rgba(176, 38, 255, 0.4);
             background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
+        }
+        .msg-admin:has(.support-mode) .admin-avatar-small {
+            border-color: var(--success);
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
         }
 
         .msg-text {
@@ -366,6 +388,24 @@
             30% { transform: translateY(-7px); opacity: 1; }
         }
 
+        /* ✨ Skeleton Loader (لوضع AI) */
+        .skeleton-line {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, rgba(176,38,255,0.1) 25%, rgba(176,38,255,0.35) 50%, rgba(176,38,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .skeleton-line:nth-child(1) { width: 80%; }
+        .skeleton-line:nth-child(2) { width: 95%; }
+        .skeleton-line:nth-child(3) { width: 60%; margin-bottom: 0; }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
         /* --- Welcome Empty State --- */
         .welcome-msg {
             text-align: center;
@@ -388,6 +428,113 @@
         @keyframes iconFloat {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-10px) rotate(6deg); }
+        }
+
+        /* 💡 Quick Reply Chips */
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 15px 20px;
+            justify-content: center;
+            animation: chipsFadeIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes chipsFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chip {
+            background: rgba(176,38,255,0.08);
+            border: 1px solid rgba(176,38,255,0.35);
+            color: var(--text-highlight);
+            padding: 9px 16px;
+            border-radius: 22px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            font-family: inherit;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .chip:hover {
+            background: rgba(176,38,255,0.22);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(176,38,255,0.35);
+            border-color: var(--primary-accent);
+        }
+        .chip:active {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 3px 10px rgba(176,38,255,0.25);
+        }
+
+        /* 📋 أزرار النسخ والإعادة */
+        .msg-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            align-self: flex-start;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .bubble-admin:hover .msg-actions { opacity: 1; }
+        .action-btn {
+            background: rgba(176,38,255,0.12);
+            border: 1px solid rgba(176,38,255,0.3);
+            color: var(--text-muted);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            padding: 0;
+        }
+        .action-btn:hover {
+            background: rgba(176,38,255,0.35);
+            color: var(--text-highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(176,38,255,0.3);
+        }
+        .action-btn:active { transform: scale(0.92); }
+
+        /* ⬇️ زر العودة للأسفل */
+        .scroll-bottom-btn {
+            position: absolute;
+            bottom: 100px;
+            left: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-accent), #7A12C1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 15px rgba(176,38,255,0.55);
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.6) translateY(15px);
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scroll-bottom-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+        .scroll-bottom-btn:hover {
+            transform: scale(1.12) translateY(0);
+            box-shadow: 0 6px 22px rgba(176,38,255,0.75);
+        }
+        .scroll-bottom-btn:active {
+            transform: scale(0.92) translateY(0);
         }
 
         /* --- أزرار التقييم الشفافة --- */
@@ -676,6 +823,8 @@
 
     <div class="chat-scroll" id="chat-container"></div>
 
+    <button class="scroll-bottom-btn" id="scroll-bottom-btn" onclick="scrollToBottom()" title="العودة للأسفل">⬇️</button>
+
     <div class="input-area">
         <div class="top-input-row" id="top-input-row">
             <div class="file-preview" id="file-preview">
@@ -709,28 +858,23 @@
     (function() {
         'use strict';
 
-        // منع النقر بزر الماوس الأيمن (Inspect)
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             return false;
         }, true);
 
-        // منع اختصارات أدوات المطور
         document.addEventListener('keydown', function(e) {
-            // F12
             if (e.key === 'F12' || e.keyCode === 123) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
-            // Ctrl+Shift+I/J/C/K  (DevTools)
             if ((e.ctrlKey || e.metaKey) && e.shiftKey &&
                 ['I','J','C','K','i','j','c','k'].indexOf(e.key) !== -1) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             }
-            // Ctrl+U / Ctrl+S  (View Source / Save)
             if ((e.ctrlKey || e.metaKey) && ['u','U','s','S'].indexOf(e.key) !== -1) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -738,23 +882,13 @@
             }
         }, true);
 
-        // تم إيقاف كشف أدوات المطور التلقائي (Docked) لأنه يسبب إغلاق الصفحة خطأً على الهواتف
-        // عند فتح لوحة المفاتيح أو تغير أبعاد الشاشة.
-
-        // مسح الكونسول دورياً (لمنع التراكم)
         setInterval(function() { try { console.clear(); } catch(e) {} }, 2000);
     })();
 
-    /* ============================================
-       إعدادات Markdown للذكاء الاصطناعي
-       ============================================ */
     if (typeof marked !== 'undefined') {
         marked.setOptions({ breaks: true, gfm: true });
     }
 
-    /* ============================================
-       إعدادات الكيبورد للموبايل
-       ============================================ */
     const appContainer = document.getElementById('app-container');
     const visualViewport = window.visualViewport;
 
@@ -776,11 +910,9 @@
 
     /* ============================================
        🔥 إعدادات Firebase Realtime Database
-       (المفتاح مشفر بـ XOR 51 - نفس تقنية GROQ)
        ============================================ */
     const FIREBASE_URL = "https://mehamzaalanat-default-rtdb.europe-west1.firebasedatabase.app";
 
-    // مفتاح Firebase مشفر (XOR 51) - مقسم إلى 3 أجزاء
     const _fa = [114,122,73,82,96,74,119,65,3,88,81,98,119];
     const _fb = [118,10,3,91,91,118,126,92,91,101,5,107,2];
     const _fc = [81,7,93,87,70,7,127,4,70,105,73,1,7];
@@ -793,12 +925,10 @@
 
     /* ============================================
        🧠 إعدادات الذكاء الاصطناعي (Groq)
-       (المفتاح مشفر بـ XOR 51 - مقسم إلى 4 أجزاء)
        ============================================ */
     const GROQ_LIST_URL = "https://api.groq.com/openai/v1/models";
     const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-    // مفتاح Groq مشفر (XOR 51) - مقسم إلى 4 أجزاء
     const _ka = [84,64,88,108,95,67,70,1,68,102,70,67,123,69];
     const _kb = [7,64,97,120,67,11,118,114,122,0,100,116,87,74];
     const _kc = [81,0,117,106,4,67,92,105,70,100,80,120,67,105];
@@ -856,6 +986,13 @@
 - نقطة نهاية API: api.fawakihai.com/v1
 - التوثيق: docs.fawakihai.com
 
+--- أسلوب الرد ---
+- استخدم الإيموجي بشكل معتدل (2-3 لكل رد فقط).
+- عند شرح ميزة، استخدم نقاطاً قصيرة بدلاً من الفقرات الطويلة.
+- إذا كان السؤال غامضاً، اطرح سؤالاً توضيحياً واحداً قبل الإجابة.
+- إذا كان الرد طويلاً (أكثر من 3 أسطر)، اختمه بـ "هل تحتاج مساعدة أخرى؟".
+- لا تعتذر بشكل مفرط، كن واثقاً ومفيداً.
+
 --- معلومات الدفع والاشتراك (سرية - تُذكر فقط عند السؤال المباشر) ---
 
 ⚠️ تعليمات صارمة للغاية:
@@ -896,8 +1033,13 @@
     let aiReady = false;
     let aiConversationHistory = [];
 
-    /* منع الحفظ المتكرر */
     let saveTimeout = null;
+
+    /* 🔹 متغيرات الميزات الجديدة */
+    let window_streamingTicketIdx = null;
+    let aiFailureCount = 0;
+    let sendTimes = [];
+    let lastScrollUpdate = 0;
 
     /* ============================================
        🔥 Firebase: حفظ حالة المحادثة
@@ -905,7 +1047,6 @@
     async function fbSaveChat() {
         if (!deviceId) return;
         try {
-            /* نزيل base64 من الصور لتجنب تجاوز حجم Firebase */
             const firebaseTickets = ticketsList.map(t => {
                 const copy = { ...t };
                 if (copy.imageUri && copy.imageUri.length > 5000) {
@@ -935,7 +1076,6 @@
         }
     }
 
-    /* حفظ مؤجل (debounced) */
     function scheduleSave() {
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => fbSaveChat(), 800);
@@ -955,7 +1095,6 @@
 
             if (data.myUserId) myUserId = data.myUserId;
             if (Array.isArray(data.ticketsList) && data.ticketsList.length > 0) {
-                /* دمج: نستخدم Firebase إن كان أطول من المحلي */
                 if (data.ticketsList.length > ticketsList.length) {
                     ticketsList = data.ticketsList;
                 }
@@ -968,7 +1107,6 @@
                 aiConversationHistory = data.aiConversationHistory;
             }
 
-            /* مزامنة مع localStorage */
             localStorage.setItem("my_user_id", myUserId);
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             localStorage.setItem("chat_mode", currentMode);
@@ -994,7 +1132,6 @@
             localStorage.setItem("device_id", deviceId);
         }
 
-        /* محاولة تحميل من Firebase */
         await fbLoadChat();
 
         updateHeaderMode();
@@ -1005,8 +1142,27 @@
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
                 startPolling();
+                document.title = document.title.replace(/^\(\d+\)\s*/, "");
             }
         });
+
+        /* 🌐 مستمعو حالة الاتصال */
+        window.addEventListener("online", updateHeaderMode);
+        window.addEventListener("offline", updateHeaderMode);
+
+        /* ⬇️ مستمع زر التمرير للأسفل */
+        document.getElementById("chat-container").addEventListener("scroll", (e) => {
+            const el = e.target;
+            const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+            document.getElementById("scroll-bottom-btn").classList.toggle("show", dist > 300);
+        });
+
+        /* 🔔 طلب إذن الإشعارات */
+        if ("Notification" in window && Notification.permission === "default") {
+            setTimeout(() => {
+                try { Notification.requestPermission(); } catch(e) {}
+            }, 3000);
+        }
     }
 
     /* ============================================
@@ -1019,12 +1175,12 @@
 
         if (currentMode === "ai") {
             title.textContent = "المساعد الذكي";
-            status.innerHTML = `<span class="status-dot"></span> نشط - ذكاء اصطناعي`;
-
-            /* إخفاء زر المرفقات في وضع AI */
+            if (navigator.onLine) {
+                status.innerHTML = `<span class="status-dot"></span> نشط - ذكاء اصطناعي`;
+            } else {
+                status.innerHTML = `<span class="status-dot offline"></span> غير متصل`;
+            }
             if (topRow) topRow.style.display = "none";
-
-            /* تنظيف أي صورة معلّقة */
             selectedImageFile = null;
             selectedImageBase64 = null;
             const fp = document.getElementById("file-preview");
@@ -1033,9 +1189,11 @@
             if (fi) fi.value = "";
         } else {
             title.textContent = "مركز الدعم الفني";
-            status.innerHTML = `<span class="status-dot"></span> متصل - دعم فني`;
-
-            /* إظهار زر المرفقات في وضع الدعم */
+            if (navigator.onLine) {
+                status.innerHTML = `<span class="status-dot"></span> متصل - دعم فني`;
+            } else {
+                status.innerHTML = `<span class="status-dot offline"></span> غير متصل`;
+            }
             if (topRow) topRow.style.display = "flex";
         }
     }
@@ -1064,6 +1222,52 @@
         const div = document.createElement("div");
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /* 🚦 تحديد معدل الإرسال (Rate Limiting) */
+    function canSend() {
+        const now = Date.now();
+        sendTimes = sendTimes.filter(t => now - t < 60000);
+        if (sendTimes.length >= 10) {
+            showToast("الرجاء الانتظار قليلاً قبل الإرسال مجدداً");
+            return false;
+        }
+        sendTimes.push(now);
+        return true;
+    }
+
+    /* 🔊🔔 إشعار المستخدم (صوت + إشعار + badge على العنوان) */
+    function notifyUser(title, body) {
+        try {
+            if (!window._audioCtx) {
+                window._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const ctx = window._audioCtx;
+            if (ctx.state === "suspended") ctx.resume();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.setValueAtTime(1150, ctx.currentTime + 0.12);
+            osc.type = "sine";
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.55);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.55);
+        } catch(e) {}
+
+        if (document.hidden && "Notification" in window && Notification.permission === "granted") {
+            try { new Notification(title, { body, icon: "jmol.jpg" }); } catch(e) {}
+        }
+
+        if (document.hidden) {
+            const cur = document.title;
+            const m = cur.match(/^\((\d+)\)\s*/);
+            const count = m ? parseInt(m[1]) + 1 : 1;
+            document.title = `(${count}) ${cur.replace(/^\(\d+\)\s*/, "")}`;
+        }
     }
 
     /* ============================================
@@ -1101,7 +1305,7 @@
     }
 
     /* ============================================
-       🤖 استدعاء الذكاء الاصطناعي
+       🤖 استدعاء الذكاء الاصطناعي (بدون Streaming - للتوافق)
        ============================================ */
     async function callAI(userMessage) {
         if (!aiReady) {
@@ -1121,7 +1325,6 @@
 
         for (let model of attempts) {
             try {
-                console.log(`جارٍ الطلب من: ${model}`);
                 const response = await fetch(GROQ_CHAT_URL, {
                     method: "POST",
                     headers: {
@@ -1140,8 +1343,8 @@
                     const data = await response.json();
                     currentAIModel = model;
                     const reply = data.choices[0].message.content;
+                    if (!reply || reply.trim().length < 3) continue;
                     aiConversationHistory.push({ role: "assistant", content: reply });
-                    /* الحفاظ على حجم التاريخ */
                     if (aiConversationHistory.length > 20) {
                         aiConversationHistory = aiConversationHistory.slice(-20);
                     }
@@ -1155,7 +1358,201 @@
     }
 
     /* ============================================
-       📤 إرسال رسالة (Router حسب الوضع)
+       ✨ استدعاء الذكاء الاصطناعي مع Streaming
+       ============================================ */
+    async function callAIStreaming(userMessage, onChunk) {
+        if (!aiReady) {
+            const ok = await initializeAI();
+            if (!ok) throw new Error("AI not ready");
+        }
+
+        aiConversationHistory.push({ role: "user", content: userMessage });
+
+        const messages = [
+            { role: "system", content: FAWAKIH_SYSTEM_PROMPT },
+            ...aiConversationHistory
+        ];
+
+        const _key = _gk();
+        const attempts = [currentAIModel, ...aiModels.filter(m => m !== currentAIModel)];
+
+        for (let model of attempts) {
+            try {
+                const response = await fetch(GROQ_CHAT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${_key}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 2000,
+                        stream: true
+                    })
+                });
+
+                if (!response.ok) continue;
+
+                currentAIModel = model;
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = "";
+                let buffer = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        const data = line.slice(6).trim();
+                        if (data === "[DONE]") continue;
+                        try {
+                            const json = JSON.parse(data);
+                            const delta = json.choices?.[0]?.delta?.content || "";
+                            if (delta) {
+                                fullText += delta;
+                                onChunk(fullText);
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                if (!fullText || fullText.trim().length < 3) {
+                    continue;
+                }
+
+                aiConversationHistory.push({ role: "assistant", content: fullText });
+                if (aiConversationHistory.length > 20) {
+                    aiConversationHistory = aiConversationHistory.slice(-20);
+                }
+                return fullText;
+            } catch (err) {
+                console.warn(`فشل streaming النموذج ${model}:`, err.message);
+            }
+        }
+        throw new Error("فشلت جميع محاولات النماذج");
+    }
+
+    /* ============================================
+       💡 Quick Reply Chips
+       ============================================ */
+    window.quickSend = function(text) {
+        document.getElementById("message-input").value = text;
+        document.getElementById("quick-chips")?.remove();
+        sendMessage();
+    };
+
+    /* ============================================
+       📋 نسخ الرد
+       ============================================ */
+    window.copyMsg = function(idx) {
+        const t = ticketsList[idx];
+        if (!t || !t.adminReply) return;
+        const doFallback = () => {
+            const ta = document.createElement("textarea");
+            ta.value = t.adminReply;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand("copy"); showToast("تم نسخ الرد ✓"); } catch(e) {}
+            document.body.removeChild(ta);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(t.adminReply)
+                .then(() => showToast("تم نسخ الرد ✓"))
+                .catch(doFallback);
+        } else {
+            doFallback();
+        }
+    };
+
+    /* ============================================
+       🔄 إعادة توليد الرد
+       ============================================ */
+    window.regenerateMsg = async function(idx) {
+        const t = ticketsList[idx];
+        if (!t?.isAI) return;
+
+        // دعم إعادة توليد آخر رد فقط
+        let lastAIIdx = -1;
+        for (let i = ticketsList.length - 1; i >= 0; i--) {
+            if (ticketsList[i].isAI && !ticketsList[i].isSystem) {
+                lastAIIdx = i;
+                break;
+            }
+        }
+        if (idx !== lastAIIdx) {
+            showToast("يمكن إعادة توليد آخر رد فقط");
+            return;
+        }
+
+        // حذف آخر زوج من التاريخ (رسالة المستخدم + الرد)
+        if (aiConversationHistory.length >= 2 &&
+            aiConversationHistory[aiConversationHistory.length - 2].role === "user") {
+            aiConversationHistory.splice(-2);
+        }
+
+        t.adminReply = "";
+        t.isReplied = false;
+        t.replyTimestamp = "";
+        window_streamingTicketIdx = idx;
+        isAdminTyping = true;
+        renderTickets();
+
+        let streamingBubble = null;
+        let lastUpdate = 0;
+
+        try {
+            const reply = await callAIStreaming(t.userMessage, (partial) => {
+                if (!streamingBubble) {
+                    isAdminTyping = false;
+                    t.isReplied = true;
+                    t.adminReply = partial;
+                    renderTickets();
+                    const bubbles = document.querySelectorAll(".bubble-admin .msg-text");
+                    streamingBubble = bubbles[bubbles.length - 1];
+                } else {
+                    t.adminReply = partial;
+                    if (streamingBubble) {
+                        try { streamingBubble.innerHTML = marked.parse(partial); }
+                        catch(e) { streamingBubble.textContent = partial; }
+                    }
+                    const now = Date.now();
+                    if (now - lastUpdate > 150) {
+                        lastUpdate = now;
+                        scrollToBottom();
+                    }
+                }
+            });
+
+            window_streamingTicketIdx = null;
+            isAdminTyping = false;
+            t.adminReply = reply;
+            t.isReplied = true;
+            t.replyTimestamp = getCurrentTime();
+            localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
+            renderTickets();
+            scheduleSave();
+        } catch (e) {
+            window_streamingTicketIdx = null;
+            isAdminTyping = false;
+            t.adminReply = "تعذر إعادة التوليد، حاول مجدداً";
+            t.isReplied = true;
+            t.replyTimestamp = getCurrentTime();
+            renderTickets();
+            scheduleSave();
+        }
+    };
+
+    /* ============================================
+       📤 إرسال رسالة
        ============================================ */
     async function sendMessage() {
         const inputEl = document.getElementById("message-input");
@@ -1166,6 +1563,9 @@
             return;
         }
 
+        if (!canSend()) return;
+
+        document.getElementById("quick-chips")?.remove();
         inputEl.blur();
 
         if (currentMode === "ai") {
@@ -1176,7 +1576,7 @@
     }
 
     /* ============================================
-       🤖 معالجة رسالة في وضع AI
+       🤖 معالجة رسالة في وضع AI (مع Streaming)
        ============================================ */
     async function handleAIMessage(msg, inputEl) {
         if (!msg) return;
@@ -1198,13 +1598,38 @@
 
         inputEl.value = "";
 
+        window_streamingTicketIdx = ticketsList.length - 1;
         isAdminTyping = true;
         renderTickets();
 
-        try {
-            const reply = await callAI(msg);
-            isAdminTyping = false;
+        let streamingBubble = null;
+        let lastUpdate = 0;
 
+        try {
+            const reply = await callAIStreaming(msg, (partial) => {
+                if (!streamingBubble) {
+                    isAdminTyping = false;
+                    ticket.isReplied = true;
+                    ticket.adminReply = partial;
+                    renderTickets();
+                    const bubbles = document.querySelectorAll(".bubble-admin .msg-text");
+                    streamingBubble = bubbles[bubbles.length - 1];
+                } else {
+                    ticket.adminReply = partial;
+                    if (streamingBubble) {
+                        try { streamingBubble.innerHTML = marked.parse(partial); }
+                        catch(e) { streamingBubble.textContent = partial; }
+                    }
+                    const now = Date.now();
+                    if (now - lastUpdate > 150) {
+                        lastUpdate = now;
+                        scrollToBottom();
+                    }
+                }
+            });
+
+            window_streamingTicketIdx = null;
+            isAdminTyping = false;
             ticket.adminReply = reply;
             ticket.isReplied = true;
             ticket.replyTimestamp = getCurrentTime();
@@ -1212,8 +1637,25 @@
             renderTickets();
             scheduleSave();
 
+            // 🔄 كشف الردود غير المفيدة والتحويل التلقائي للدعم
+            const isWeakReply = reply.includes("لا أستطيع") ||
+                                reply.includes("خارج نطاق") ||
+                                reply.includes("لا يمكنني") ||
+                                reply.trim().length < 15;
+            if (isWeakReply) {
+                aiFailureCount++;
+                if (aiFailureCount >= 2) {
+                    aiFailureCount = 0;
+                    showToast("سأوصلك بالدعم الفني البشري 💬");
+                    setTimeout(switchToSupportMode, 1500);
+                }
+            } else {
+                aiFailureCount = 0;
+            }
+
             logAIToTelegram(msg, reply);
         } catch (e) {
+            window_streamingTicketIdx = null;
             isAdminTyping = false;
             ticket.adminReply = "عذراً، حدث خطأ مؤقت أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.";
             ticket.isReplied = true;
@@ -1395,13 +1837,27 @@ ${reply.substring(0, 1800)}`;
                     ${greeting}
                 </div>
             `;
+
+            /* 💡 Quick Chips في وضع AI */
+            if (currentMode === "ai") {
+                const chips = document.createElement("div");
+                chips.className = "quick-chips";
+                chips.id = "quick-chips";
+                chips.innerHTML = `
+                    <button class="chip" onclick="quickSend('كيف أشترك في التطبيق؟')">💰 كيف أشترك؟</button>
+                    <button class="chip" onclick="quickSend('ما هي طرق الدفع المتاحة؟')">💳 طرق الدفع</button>
+                    <button class="chip" onclick="quickSend('كيف أحمّل التطبيق؟')">⬇️ التحميل</button>
+                    <button class="chip" onclick="quickSend('ما هي دقة التخمين في التطبيق؟')">🎯 الدقة</button>
+                    <button class="chip" onclick="quickSend('التطبيق لا يعمل معي')">🛠️ مشكلة تقنية</button>
+                `;
+                container.appendChild(chips);
+            }
             return;
         }
 
         const fragment = document.createDocumentFragment();
 
         ticketsList.forEach((t, idx) => {
-            /* رسالة نظام التحويل */
             if (t.isSystem) {
                 const row = document.createElement("div");
                 row.className = "system-transfer-row";
@@ -1416,7 +1872,6 @@ ${reply.substring(0, 1800)}`;
                 return;
             }
 
-            /* رسالة المستخدم */
             if (t.userMessage || t.imageUri) {
                 const key = `u-${idx}-${(t.userMessage || '').substring(0, 30)}-${t.timestamp || ''}`;
                 const isNew = !seenMessageKeys.has(key);
@@ -1438,7 +1893,6 @@ ${reply.substring(0, 1800)}`;
                 fragment.appendChild(row);
             }
 
-            /* رد المساعد / الدعم */
             if (t.isReplied && t.adminReply) {
                 const key = `a-${idx}-${t.adminReply.substring(0, 30)}-${t.replyTimestamp || ''}`;
                 const isNew = !seenMessageKeys.has(key);
@@ -1450,7 +1904,6 @@ ${reply.substring(0, 1800)}`;
                 const nameLabel = t.isAI ? 'المساعد الذكي' : 'فريق الدعم';
                 const avatarHtml = `<img src="jmol.jpg" class="admin-avatar-small" alt="${nameLabel}" onerror="this.outerHTML='<div class=\\'admin-avatar-small\\' style=\\'display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem\\'>${t.isAI ? '🤖' : '💬'}</div>'">`;
 
-                /* روابط إن وُجدت في الرد (للدعم فقط) */
                 let linksHtml = "";
                 if (!t.isAI) {
                     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -1462,7 +1915,6 @@ ${reply.substring(0, 1800)}`;
                     }
                 }
 
-                /* محتوى الرد: Markdown للذكاء الاصطناعي، نص عادي للدعم */
                 let replyContent;
                 if (t.isAI && typeof marked !== 'undefined') {
                     try {
@@ -1474,12 +1926,27 @@ ${reply.substring(0, 1800)}`;
                     replyContent = escapeHtml(t.adminReply);
                 }
 
+                /* 📋 أزرار النسخ والإعادة - فقط للـAI وليس أثناء streaming */
+                let actionsHtml = "";
+                const isCurrentlyStreaming = (window_streamingTicketIdx === idx);
+                if (t.isAI && !isCurrentlyStreaming) {
+                    actionsHtml = `
+                        <div class="msg-actions">
+                            <button class="action-btn" onclick="copyMsg(${idx})" title="نسخ">📋</button>
+                            <button class="action-btn" onclick="regenerateMsg(${idx})" title="إعادة توليد">🔄</button>
+                        </div>
+                    `;
+                }
+
+                const bubbleClass = t.isAI ? "bubble bubble-admin" : "bubble bubble-admin support-mode";
+
                 row.innerHTML = `
                     ${avatarHtml}
-                    <div class="bubble bubble-admin">
+                    <div class="${bubbleClass}">
                         <span class="admin-name">${nameLabel}</span>
                         <div class="msg-text">${replyContent}</div>
                         ${linksHtml}
+                        ${actionsHtml}
                         <span class="msg-time">${t.replyTimestamp || t.timestamp || "الآن"}</span>
                     </div>
                 `;
@@ -1487,30 +1954,44 @@ ${reply.substring(0, 1800)}`;
             }
         });
 
-        /* مؤشر الكتابة */
+        /* مؤشر الانتظار */
         if (isAdminTyping) {
             const row = document.createElement("div");
             row.className = "message-row msg-admin visible";
             const avatarHtml = `<img src="jmol.jpg" class="admin-avatar-small" alt="typing" onerror="this.outerHTML='<div class=\\'admin-avatar-small\\' style=\\'display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem\\'>${currentMode === 'ai' ? '🤖' : '💬'}</div>'">`;
-            row.innerHTML = `
-                ${avatarHtml}
-                <div class="bubble bubble-admin">
-                    <span class="typing-indicator">
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                    </span>
-                </div>
-            `;
+
+            if (currentMode === "ai") {
+                /* ✨ Skeleton loader لوضع AI */
+                row.innerHTML = `
+                    ${avatarHtml}
+                    <div class="bubble bubble-admin">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                `;
+            } else {
+                /* نقاط متحركة لوضع الدعم */
+                row.innerHTML = `
+                    ${avatarHtml}
+                    <div class="bubble bubble-admin support-mode">
+                        <span class="typing-indicator">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                        </span>
+                    </div>
+                `;
+            }
             fragment.appendChild(row);
         }
 
         container.appendChild(fragment);
 
-        /* أزرار التقييم "هل استفدت؟" تحت آخر رد AI */
+        /* أزرار التقييم تحت آخر رد AI */
         if (currentMode === "ai" && !isAdminTyping && !window._hideFeedback) {
             const lastTicket = [...ticketsList].reverse().find(t => !t.isSystem);
-            if (lastTicket && lastTicket.isAI && lastTicket.isReplied) {
+            if (lastTicket && lastTicket.isAI && lastTicket.isReplied && window_streamingTicketIdx === null) {
                 const fbRow = document.createElement("div");
                 fbRow.className = "ai-feedback-row";
                 fbRow.innerHTML = `
@@ -1528,6 +2009,13 @@ ${reply.substring(0, 1800)}`;
             el.classList.add("visible");
             setTimeout(() => el.style.transitionDelay = "", 600);
         });
+
+        /* تحديث زر التمرير */
+        const sb = document.getElementById("scroll-bottom-btn");
+        if (sb) {
+            const dist = container.scrollHeight - container.scrollTop - container.clientHeight;
+            sb.classList.toggle("show", dist > 300);
+        }
 
         scrollToBottom();
     }
@@ -1567,6 +2055,8 @@ ${reply.substring(0, 1800)}`;
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             seenMessageKeys.clear();
             isAdminTyping = false;
+            window_streamingTicketIdx = null;
+            aiFailureCount = 0;
 
             currentMode = "ai";
             localStorage.setItem("chat_mode", "ai");
@@ -1704,6 +2194,9 @@ ${reply.substring(0, 1800)}`;
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
             renderTickets();
             scheduleSave();
+
+            /* 🔊🔔 إشعار المستخدم */
+            notifyUser("فريق الدعم", reply.substring(0, 100));
 
             try {
                 if ('vibrate' in navigator) navigator.vibrate(200);
