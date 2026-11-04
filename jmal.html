@@ -360,7 +360,6 @@
             -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
         }
 
-        /* مؤشر الستريمنغ للردود */
         .msg-text.streaming::after {
             content: '';
             display: inline-block;
@@ -1030,46 +1029,15 @@
     }
 
     /* ============================================
-       🧠 Groq — مفتاحان (تبديل تلقائي في الخلفية)
+       🧠 Groq — مفتاح واحد
        ============================================ */
     const GROQ_LIST_URL = "https://api.groq.com/openai/v1/models";
     const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-    // المفتاح الأول (مشفّر)
-    const _k1a = [84,64,88,108,95,67,70,1,68,102,70,67,123,69];
-    const _k1b = [7,64,97,120,67,11,118,114,122,0,100,116,87,74];
-    const _k1c = [81,0,117,106,4,67,92,105,70,100,80,120,67,105];
-    const _k1d = [64,105,98,114,84,65,67,84,81,100,92,116,73,85];
-    function _gk1() {
-        const _all = [..._k1a, ..._k1b, ..._k1c, ..._k1d];
-        const _s = _all.map(b => String.fromCharCode(b ^ 51)).join('');
-        for (let i = 0; i < _all.length; i++) _all[i] = 0;
-        return _s;
-    }
+    const GROQ_API_KEY = "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";
 
-    // المفتاح الثاني (مشفّر - احتياطي يعمل تلقائياً عند فشل الأول)
-    const _k2a = [84,64,88,108,71,95,90,126,69,81,95,99,93,107];
-    const _k2b = [89,4,84,89,0,97,96,80,107,85,100,116,87,74];
-    const _k2c = [81,0,113,106,7,106,75,11,92,11,120,64,80,65];
-    const _k2d = [123,65,116,7,90,82,3,6,101,81,105,101,113,86];
-    function _gk2() {
-        const _all = [..._k2a, ..._k2b, ..._k2c, ..._k2d];
-        const _s = _all.map(b => String.fromCharCode(b ^ 51)).join('');
-        for (let i = 0; i < _all.length; i++) _all[i] = 0;
-        return _s;
-    }
-
-    // إدارة ترتيب المفاتيح (المفتاح الناجح ينتقل للمقدمة)
-    let keyOrder = [1, 2];
-
-    function getKey(id) {
-        return id === 1 ? _gk1() : _gk2();
-    }
-
-    function promoteKey(id) {
-        if (keyOrder[0] !== id) {
-            keyOrder = [id, ...keyOrder.filter(k => k !== id)];
-        }
+    function getKey() {
+        return GROQ_API_KEY;
     }
 
     /* ============================================
@@ -1416,49 +1384,46 @@
     }
 
     /* ============================================
-       🧠 AI Init (يحاول كلا المفتاحين)
+       🧠 AI Init (مفتاح واحد)
        ============================================ */
     async function initializeAI() {
-        for (const keyId of keyOrder) {
-            try {
-                const response = await fetch(GROQ_LIST_URL, {
-                    headers: { "Authorization": `Bearer ${getKey(keyId)}` }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    aiModels = (data?.data || [])
-                        .filter(m => !m.id.includes("whisper") && !m.id.includes("tts") && !m.id.includes("guard") && !m.id.includes("embed"))
-                        .map(m => m.id)
-                        .sort((a, b) => {
-                            if (a.includes("llama-3.3-70b")) return -1;
-                            if (a.includes("qwen")) return -1;
-                            return 1;
-                        });
-                    if (aiModels.length > 0) {
-                        currentAIModel = aiModels[0];
-                        aiReady = true;
-                        aiRetryCount = 0;
-                        promoteKey(keyId);
-                        console.log("[AI] Ready:", currentAIModel, "| key#", keyId);
-                        return true;
-                    }
+        try {
+            const response = await fetch(GROQ_LIST_URL, {
+                headers: { "Authorization": `Bearer ${getKey()}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                aiModels = (data?.data || [])
+                    .filter(m => !m.id.includes("whisper") && !m.id.includes("tts") && !m.id.includes("guard") && !m.id.includes("embed"))
+                    .map(m => m.id)
+                    .sort((a, b) => {
+                        if (a.includes("llama-3.3-70b")) return -1;
+                        if (a.includes("qwen")) return -1;
+                        return 1;
+                    });
+                if (aiModels.length > 0) {
+                    currentAIModel = aiModels[0];
+                    aiReady = true;
+                    aiRetryCount = 0;
+                    console.log("[AI] Ready:", currentAIModel);
+                    return true;
                 }
-            } catch (e) {
-                console.warn("[AI] Init failed for key", keyId, e);
             }
+        } catch (e) {
+            console.warn("[AI] Init failed:", e);
         }
         return false;
     }
 
     /* ============================================
-       🤖 Streaming Request (مع دعم المفتاح الاحتياطي)
+       🤖 Streaming Request (مفتاح واحد)
        ============================================ */
-    async function streamRequest(model, keyId, messages, onChunk) {
+    async function streamRequest(model, messages, onChunk) {
         const response = await fetch(GROQ_CHAT_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${getKey(keyId)}`
+                "Authorization": `Bearer ${getKey()}`
             },
             body: JSON.stringify({
                 model,
@@ -1471,7 +1436,6 @@
 
         if (!response.ok) {
             const err = new Error('HTTP ' + response.status);
-            err.keyIssue = [401, 403, 429].includes(response.status);
             err.status = response.status;
             throw err;
         }
@@ -1519,7 +1483,7 @@
     }
 
     /* ============================================
-       🤖 Call AI (Key rotation + cache + streaming)
+       🤖 Call AI (cache + streaming + model fallback)
        ============================================ */
     async function callAI(userMessage, onChunk) {
         const cacheKey = userMessage.trim().toLowerCase();
@@ -1552,36 +1516,29 @@
         let lastFullText = '';
 
         for (const model of modelAttempts) {
-            for (const keyId of [...keyOrder]) {
-                try {
-                    console.log("[AI] Trying:", model, "| key#", keyId);
-                    const t0 = performance.now();
-                    const result = await streamRequest(model, keyId, messages, (fullText, delta) => {
-                        streamedAny = true;
-                        lastFullText = fullText;
-                        if (onChunk) onChunk(fullText, delta);
-                    });
-                    const elapsed = performance.now() - t0;
-                    console.log("[AI] OK:", model, "| key#", keyId, "|", elapsed.toFixed(0) + "ms");
+            try {
+                console.log("[AI] Trying:", model);
+                const t0 = performance.now();
+                const result = await streamRequest(model, messages, (fullText, delta) => {
+                    streamedAny = true;
+                    lastFullText = fullText;
+                    if (onChunk) onChunk(fullText, delta);
+                });
+                const elapsed = performance.now() - t0;
+                console.log("[AI] OK:", model, "|", elapsed.toFixed(0) + "ms");
 
-                    promoteKey(keyId);
-                    currentAIModel = model;
-                    aiConversationHistory.push({ role: "assistant", content: result });
-                    aiCache.set(cacheKey, result);
-                    if (aiCache.size > AI_CACHE_MAX) aiCache.delete(aiCache.keys().next().value);
-                    return result;
-                } catch (e) {
-                    if (streamedAny && lastFullText) return lastFullText;
-                    if (e.keyIssue) {
-                        console.log("[AI] Key#" + keyId + " issue: " + e.status + " → switching");
-                        continue;
-                    }
-                    console.log("[AI] Model failed: " + model + " | " + e.message);
-                    break;
-                }
+                currentAIModel = model;
+                aiConversationHistory.push({ role: "assistant", content: result });
+                aiCache.set(cacheKey, result);
+                if (aiCache.size > AI_CACHE_MAX) aiCache.delete(aiCache.keys().next().value);
+                return result;
+            } catch (e) {
+                if (streamedAny && lastFullText) return lastFullText;
+                console.log("[AI] Model failed: " + model + " | " + e.message);
+                continue;
             }
         }
-        throw new Error("All models and keys failed");
+        throw new Error("All models failed");
     }
 
     function trimHistory() {
@@ -1711,7 +1668,6 @@
             ticket.isReplied = true;
             ticket.replyTimestamp = getCurrentTime();
 
-            // update UI directly for last time
             if (streamTextEl) {
                 try {
                     streamTextEl.innerHTML = marked.parse(fullReply);
@@ -1723,7 +1679,6 @@
 
             localStorage.setItem("secure_tickets_data_web", JSON.stringify(ticketsList));
 
-            // Pre-mark as seen to prevent re-animation flash
             const tIdx = ticketsList.indexOf(ticket);
             const finalKey = `a-${tIdx}-${fullReply.substring(0, 30)}-${ticket.replyTimestamp}`;
             seenMessageKeys.add(finalKey);
